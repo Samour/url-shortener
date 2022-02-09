@@ -13,7 +13,7 @@ Resources:
       RepositoryName: !Ref ServiceName
       ImageTagMutability: IMMUTABLE
       RepositoryPolicyText:
-        Version: "2008-10-17"
+        Version: "2012-10-17"
         Statement:
           - Sid: AllowPushPull
             Effect: Allow
@@ -33,3 +33,28 @@ Resources:
           Value: !Ref ServiceName
         - Key: Phase
           Value: !Ref ProjectPhase
+
+  GithubActionUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub "${ServiceName}GithubUser"
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  GithubActionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${ServiceName}GithubPolicy"
+      Users:
+        - !Ref GithubActionUser
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: GetAuthorizationTokenStatement
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource: !GetAtt ImageRepo.Arn
