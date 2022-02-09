@@ -57,4 +57,4 @@ Resources:
             Effect: Allow
             Action:
               - ecr:GetAuthorizationToken
-            Resource: !GetAtt ImageRepo.Arn
+            Resource: "*"
