@@ -60,7 +60,7 @@ jobs:
       - name: Build, tag & push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          VERSION: ${{ needs.build.outputs.version }}
+          VERSION: ${{ jobs.build.outputs.version }}
         run: |
           cd be
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION .
