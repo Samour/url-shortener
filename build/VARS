@@ -1,3 +1,2 @@
 export SERVICE_NAME="url-shortener"
 export PROJECT_PHASE=POC
-export DOCKER_REPO=081487835574.dkr.ecr.ap-southeast-2.amazonaws.com/url-shortener
