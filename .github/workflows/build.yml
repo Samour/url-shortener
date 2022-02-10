@@ -84,6 +84,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Cloudformation Plan
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
         run: |
-          cd cloudformation
+          cd build
           ./create-service.sh
