@@ -5,7 +5,8 @@ cd "${0%/*}"
 
 . ./VARS
 
-CHANGE_SET_NAME="${SERVICE_NAME}-app-${VERSION}"
+CS_VERSION=$(echo -n "$VERSION" | tr '_' '-')
+CHANGE_SET_NAME="${SERVICE_NAME}-app-${CS_VERSION}"
 
 _CHANGE_SET_TYPE=UPDATE
 if [ "$CHANGE_SET_TYPE" = "CREATE" ]; then
