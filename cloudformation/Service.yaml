@@ -226,7 +226,7 @@ Resources:
   ContainerLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Ref "/${ServiceName}/ecs"
+      LogGroupName: !Sub "/${ServiceName}/ecs"
       Tags:
         - Key: Project
           Value: !Ref ServiceName
