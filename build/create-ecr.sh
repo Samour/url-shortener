@@ -5,7 +5,7 @@ cd "${0%/*}"
 
 . ./VARS
 
-CHANGE_SET_TS=$(date +%FT%H-%M-%S)
+CHANGE_SET_TS=$(date -u +%FT%H-%M-%S)
 CHANGE_SET_NAME="${SERVICE_NAME}-ecr-${CHANGE_SET_TS}"
 
 _CHANGE_SET_TYPE=UPDATE

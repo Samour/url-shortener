@@ -1,0 +1,325 @@
+Parameters:
+  ServiceName:
+    Description: Name for ECR repo
+    Type: String
+  ProjectPhase:
+    Description: Phase of the project
+    Type: String
+  Version:
+    Description: Artifact version
+    Type: String
+  DnsZoneName:
+    Description: Hosted Zone name
+    Type: String
+  DnsName:
+    Description: Full DNS name
+    Type: String
+
+Resources:
+  # VPC & Routing
+  ApplicationVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.0.0.0/16
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  SubnetZoneA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      CidrBlock: 172.0.0.0/26
+      AvailabilityZone: ap-southeast-2a
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  SubnetZoneB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      CidrBlock: 172.0.0.64/26
+      AvailabilityZone: ap-southeast-2b
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  SubnetZoneC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      CidrBlock: 172.0.0.128/26
+      AvailabilityZone: ap-southeast-2c
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      InternetGatewayId: !Ref InternetGateway
+
+  VpcRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  InternetRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !GetAtt InternetGateway.InternetGatewayId
+      RouteTableId: !Ref VpcRouteTable
+
+  SubnetARouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetZoneA
+
+  SubnetBRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetZoneB
+
+  SubnetCRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetZoneC
+
+  # Security Groups
+  ServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      GroupName: !Sub "${ServiceName}-service-sg"
+      GroupDescription: Security group for application service containers
+      SecurityGroupIngress:
+        - CidrIp: !GetAtt ApplicationVpc.CidrBlock
+          IpProtocol: tcp
+          FromPort: 1
+          ToPort: 65535
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  PublicABLSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      GroupName: !Sub "${ServiceName}-alb-sg"
+      GroupDescription: Security group for public ALB
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 1
+          ToPort: 65535
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  # Load Balancer/Ingress
+  PublicLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${ServiceName}-alb"
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref PublicABLSecurityGroup
+      Subnets:
+        - !Ref SubnetZoneA
+        - !Ref SubnetZoneB
+        - !Ref SubnetZoneC
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  PublicHttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref PublicLoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig:
+            StatusCode: 404
+
+  ApplicationTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref ApplicationVpc
+      Name: !Sub "${ServiceName}-target-group"
+      Port: 8080
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: "/actuator/health"
+      HealthCheckPort: 8080
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      UnhealthyThresholdCount: 3
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  ApplicationListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Priority: 1
+      ListenerArn: !Ref PublicHttpListener
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - "/actuator/*"
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref ApplicationTargetGroup
+
+  IngressDns:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref DnsZoneName
+      Name: !Ref DnsName
+      AliasTarget:
+        DNSName: !GetAtt PublicLoadBalancer.DNSName
+        HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
+      Type: A
+
+  # ECS Deployment
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${ServiceName}-cluster"
+      CapacityProviders:
+        - FARGATE_SPOT
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  TaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ServiceName}-task-exec-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: ECRPull
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "ecr:BatchCheckLayerAvailability"
+                  - "ecr:BatchGetImage"
+                  - "ecr:GetDownloadUrlForLayer"
+                  - "ecr:GetAuthorizationToken"
+                Resource: "*"
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Ref ServiceName
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      NetworkMode: awsvpc
+      ContainerDefinitions:
+        - Name: !Ref ServiceName
+          Image:
+            Fn::Join:
+              - ":"
+              - - Fn::ImportValue: !Sub "${ServiceName}-ecr-uri"
+                - !Ref Version
+          PortMappings:
+            - ContainerPort: 8080
+      Cpu: 256
+      Memory: 512
+      RequiresCompatibilities:
+        - FARGATE
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+        - Key: Version
+          Value: !Ref Version
+
+  ECSService:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - ApplicationListenerRule
+    Properties:
+      ServiceName: !Sub "${ServiceName}-service"
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          SecurityGroups:
+            - !Ref ServiceSecurityGroup
+          Subnets:
+            - !Ref SubnetZoneA
+            - !Ref SubnetZoneB
+            - !Ref SubnetZoneC
+          AssignPublicIp: ENABLED
+      LoadBalancers:
+        - ContainerName: !Ref ServiceName
+          ContainerPort: 8080
+          TargetGroupArn: !Ref ApplicationTargetGroup
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+        - Key: Version
+          Value: !Ref Version

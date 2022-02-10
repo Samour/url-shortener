@@ -58,3 +58,10 @@ Resources:
             Action:
               - ecr:GetAuthorizationToken
             Resource: "*"
+
+Outputs:
+  Repository:
+    Description: URI of image repository
+    Value: !GetAtt ImageRepo.RepositoryUri
+    Export:
+      Name: !Sub "${ServiceName}-ecr-uri"
