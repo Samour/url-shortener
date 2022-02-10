@@ -63,6 +63,7 @@ Resources:
             Action:
               - "cloudformation:DescribeStacks"
               - "cloudformation:CreateChangeSet"
+              - "cloudformation:DescribeChangeSet"
             Resource: !Sub "arn:aws:cloudformation:*:${AWS::AccountId}:stack/${ServiceName}-app/*"
 
 Outputs:

@@ -8,10 +8,6 @@ on:
 env:
   AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: url-shortener
-  SERVICE_NAME: url-shortener
-  PROJECT_PHASE: POC
-  DNS_ZONE_NAME: samour.net.
-  DNS_NAME: api.urls.samour.net.
 
 jobs:
   build:
@@ -88,17 +84,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Cloudformation Plan
-        uses: aws-actions/aws-cloudformation-github-deploy@v1
-        with:
-          name: ${{ env.SERVICE_NAME }}-app
-          template: cloudformation/Service.yaml
-          no-execute-changeset: "1"
-          no-fail-on-empty-changeset: "1"
-          no-delete-failed-changeset: "1"
-          capabilities: CAPABILITY_NAMED_IAM
-          parameter-overrides: >-
-            ServiceName=${{ env.SERVICE_NAME }},
-            ProjectPhase=${{ env.PROJECT_PHASE }},
-            Version=${{ needs.build.outputs.version }},
-            DnsZoneName=${{ env.DNS_ZONE_NAME }},
-            DnsName=${{ env.DNS_NAME }}
+        run: |
+          cd cloudformation
+          ./create-service.sh

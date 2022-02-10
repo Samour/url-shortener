@@ -1,2 +1,4 @@
 export SERVICE_NAME="url-shortener"
 export PROJECT_PHASE=POC
+export DNS_ZONE_NAME="samour.net."
+export DNS_NAME="api.urls.samour.net."
