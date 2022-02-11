@@ -95,7 +95,7 @@ jobs:
           cache: npm
           cache-dependency-path: fe
       - name: Build FE
-        run: npm build
+        run: npm run build
         working-directory: fe
       - name: Upload FE assets
         uses: actions/upload-artifact@v2
