@@ -78,6 +78,11 @@ Resources:
               - "cloudformation:CreateChangeSet"
               - "cloudformation:DescribeChangeSet"
             Resource: !Sub "arn:aws:cloudformation:*:${AWS::AccountId}:stack/${ServiceName}-app/*"
+          - Sid: S3Upload
+            Effect: Allow
+            Action:
+              - "s3:PutObject"
+            Resource: !Sub "arn:aws:s3:::fe.${ServiceName}.samour.net/*"
 
 Outputs:
   Repository:
