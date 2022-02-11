@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: url-shortener
-  S3_BUCKET: s3.url-shortener.samour.net
+  S3_BUCKET: fe.url-shortener.samour.net
 
 jobs:
   version:
