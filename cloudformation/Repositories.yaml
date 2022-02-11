@@ -7,6 +7,7 @@ Parameters:
     Type: String
 
 Resources:
+  # ECR Repo (BE)
   ImageRepo:
     Type: AWS::ECR::Repository
     Properties:
@@ -34,6 +35,18 @@ Resources:
         - Key: Phase
           Value: !Ref ProjectPhase
 
+  # S3 Bucket (FE)
+  FeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "fe.${ServiceName}.samour.net"
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+  # IAM for Github Actions
   GithubActionUser:
     Type: AWS::IAM::User
     Properties:
