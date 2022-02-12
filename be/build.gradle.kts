@@ -28,10 +28,34 @@ allprojects {
 //	}
 }
 
+sourceSets {
+    create("localUtils") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+configurations.getByName("localUtilsImplementation")
+    .extendsFrom(configurations.implementation.get())
+configurations.getByName("localUtilsRuntimeOnly")
+    .extendsFrom(configurations.runtimeOnly.get())
+
+task<JavaExec>("createTables") {
+    dependsOn(tasks.getByName("classes"))
+    dependsOn(tasks.getByName("localUtilsClasses"))
+    classpath = sourceSets["localUtils"].runtimeClasspath
+    environment["SERVICE_NAME"] = "urls-local"
+    environment["DYNAMODB_ENDPOINT"] = "http://localhost:8000"
+    mainClass.set("me.aburke.urlshortener.store.CreateTablesKt")
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    implementation("software.amazon.awssdk:dynamodb:2.17.128")
 }

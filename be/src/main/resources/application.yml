@@ -1,0 +1,5 @@
+dynamodb:
+  tables:
+    user:
+      tableName: ${SERVICE_NAME}-user
+      canonicalUsernameIndex: ${SERVICE_NAME}-user-canonical-username
