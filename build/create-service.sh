@@ -26,6 +26,7 @@ aws cloudformation --output json \
     ParameterKey=DnsZoneName,ParameterValue="$DNS_ZONE_NAME" \
     ParameterKey=ApiDnsName,ParameterValue="$API_DNS_NAME" \
     ParameterKey=FEDnsName,ParameterValue="$FE_DNS_NAME" \
+    ParameterKey=ACMHostedZoneId,ParameterValue="$ACM_HOSTED_ZONE_ID" \
     ParameterKey=CFCertificateArn,ParameterValue="$CF_CERTIFICATE_ARN" >/dev/null
 
 echo
