@@ -1,7 +1,7 @@
 export SERVICE_NAME="url-shortener"
 export PROJECT_PHASE=POC
 export DNS_ZONE_NAME="samour.net."
-export API_DNS_NAME="api.urls.samour.net."
+export API_DNS_NAME="api.urls.samour.net"
 export FE_DNS_NAME="urls.samour.net"
 export ACM_HOSTED_ZONE_ID=Z2H12RVIERJNNM
 export CF_CERTIFICATE_ARN="arn:aws:acm:us-east-1:081487835574:certificate/cce2432d-8817-4979-9f3f-181313e345e1"
