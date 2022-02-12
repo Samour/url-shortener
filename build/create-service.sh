@@ -8,6 +8,11 @@ cd "${0%/*}"
 CS_VERSION=$(echo -n "$VERSION" | tr '_' '-')
 CHANGE_SET_NAME="${SERVICE_NAME}-app-${CS_VERSION}"
 
+_VERSION="$VERSION"
+if [ ! -z "$DEPLOY_VERSION" ] && [ "$DEPLOY_VERSION" != "latest" ]; then
+  _VERSION="$DEPLOY_VERSION"
+fi
+
 _CHANGE_SET_TYPE=UPDATE
 if [ "$CHANGE_SET_TYPE" = "CREATE" ]; then
   _CHANGE_SET_TYPE=CREATE
@@ -22,7 +27,7 @@ aws cloudformation --output json \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameters ParameterKey=ServiceName,ParameterValue="$SERVICE_NAME" \
     ParameterKey=ProjectPhase,ParameterValue="$PROJECT_PHASE" \
-    ParameterKey=Version,ParameterValue="$VERSION" \
+    ParameterKey=Version,ParameterValue="$_VERSION" \
     ParameterKey=DnsZoneName,ParameterValue="$DNS_ZONE_NAME" \
     ParameterKey=ApiDnsName,ParameterValue="$API_DNS_NAME" \
     ParameterKey=FEDnsName,ParameterValue="$FE_DNS_NAME" \
