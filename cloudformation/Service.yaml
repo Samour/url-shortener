@@ -385,6 +385,11 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CFOriginAccessIdentity}"
         DefaultRootObject: "index.html"
+        CustomErrorResponses:
+          # Due to CF/S3 permissions, an "object not found" will result in 403 response code
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "index.html"
         Aliases:
           - !Ref FEDnsName
         ViewerCertificate:
