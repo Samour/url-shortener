@@ -510,6 +510,17 @@ Resources:
             - HEAD
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
           ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviours:
+          - TargetOriginId: !Sub "${ServiceName}-cf-origin"
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            PathPattern: /index.html
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+            ViewerProtocolPolicy: redirect-to-https
       Tags:
         - Key: Project
           Value: !Ref ServiceName
