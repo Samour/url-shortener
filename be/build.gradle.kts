@@ -55,7 +55,7 @@ task("writeVersionFile") {
         file("$projectDir/src/main/resources/version.properties").writeText("version=$version")
     }
 }
-tasks.build.get().dependsOn("writeVersionFile")
+tasks.processResources.get().dependsOn("writeVersionFile")
 
 dependencies {
     // Kotlin
