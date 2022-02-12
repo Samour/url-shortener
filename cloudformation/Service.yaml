@@ -193,7 +193,7 @@ Resources:
       TargetType: ip
       HealthCheckEnabled: true
       HealthCheckIntervalSeconds: 30
-      HealthCheckPath: "/actuator/health"
+      HealthCheckPath: !Sub "/${ServiceName}/actuator/health"
       HealthCheckPort: 8080
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
@@ -216,7 +216,7 @@ Resources:
       Conditions:
         - Field: path-pattern
           Values:
-            - !Sub "/${ServiceName}/*"
+            - !Sub "/${ServiceName}/v1/*"
       Actions:
         - Type: forward
           TargetGroupArn: !Ref ApplicationTargetGroup
