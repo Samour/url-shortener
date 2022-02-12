@@ -26,7 +26,7 @@ class RegisterController(private val registerUserService: RegisterUserService) {
         return registerUserService.registerUser(
             username = registerRequest.username,
             rawPassword = registerRequest.password,
-            loggingContext = loggingContext,
+            loggingContext = contextWithAction,
         ).let {
             RegisterUserResponse(
                 userId = it.id,

@@ -1,8 +1,11 @@
 package me.aburke.urlshortener.identity.authentication.api
 
+import me.aburke.urlshortener.identity.IdentityConsts.SESSION_COOKIE_KEY
+import me.aburke.urlshortener.identity.authentication.dto.AuthInfoResponse
 import me.aburke.urlshortener.identity.authentication.dto.LoginRequest
 import me.aburke.urlshortener.identity.authentication.dto.LoginResponse
 import me.aburke.urlshortener.identity.authentication.service.SessionService
+import me.aburke.urlshortener.identity.authentication.store.SessionModel
 import me.aburke.urlshortener.logging.LoggingContext
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
@@ -14,8 +17,6 @@ import javax.servlet.http.HttpServletResponse
 class AuthenticationController(private val sessionService: SessionService) {
 
     companion object {
-        private const val SESSION_COOKIE_KEY = "SessionId"
-
         private val logger = LoggerFactory.getLogger(AuthenticationController::class.java)
     }
 
@@ -31,7 +32,7 @@ class AuthenticationController(private val sessionService: SessionService) {
         return sessionService.createSession(
             username = loginRequest.username,
             password = loginRequest.password,
-            loggingContext = loggingContext,
+            loggingContext = contextWithAction,
         ).also { httpResponse.addCookie(createSessionCookie(it.sessionId)) }
             .let {
                 LoginResponse(
@@ -47,4 +48,18 @@ class AuthenticationController(private val sessionService: SessionService) {
                 secure = true
                 isHttpOnly = true
             }
+
+    @GetMapping("/info")
+    fun getAuthInfo(
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestAttribute("session") session: SessionModel,
+    ): AuthInfoResponse {
+        loggingContext.withAttribute("apiAction" to "getAuthInfo")
+            .writeLog { logger.info("Sending authentication info back to user") }
+
+        return AuthInfoResponse(
+            userId = session.userId,
+            username = session.username,
+        )
+    }
 }
