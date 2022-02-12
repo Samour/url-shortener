@@ -14,7 +14,7 @@ interface State {
 }
 
 const selector = (state: AppState): State => ({
-  enableRouting: state.authenticatedUser.authStatus != AuthStatus.INDETERMINATE,
+  enableRouting: state.authenticatedUser.authStatus !== AuthStatus.INDETERMINATE,
 });
 
 function App() {
