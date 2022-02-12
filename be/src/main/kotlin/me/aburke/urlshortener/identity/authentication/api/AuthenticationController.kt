@@ -21,7 +21,7 @@ class AuthenticationController(private val sessionService: SessionService) {
 
     @PostMapping("/login")
     fun logIn(
-        @RequestAttribute loggingContext: LoggingContext,
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
         @RequestBody loginRequest: LoginRequest,
         httpResponse: HttpServletResponse,
     ): LoginResponse {
