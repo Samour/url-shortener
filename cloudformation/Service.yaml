@@ -364,6 +364,8 @@ Resources:
           Environment:
             - Name: SERVICE_NAME
               Value: !Ref ServiceName
+            - Name: SPRING_PROFILES_ACTIVE
+              Value: json-logging
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:

@@ -33,6 +33,8 @@ jobs:
 
   build_be:
     runs-on: ubuntu-latest
+    needs:
+      - version
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,6 +44,8 @@ jobs:
           java-version: 11
           distribution: adopt
       - name: Build application jar
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
           ./gradlew bootJar
           cp build/libs/url-shortener-*.jar ./app.jar

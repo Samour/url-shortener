@@ -49,13 +49,30 @@ task<JavaExec>("createTables") {
     mainClass.set("me.aburke.urlshortener.store.CreateTablesKt")
 }
 
+task("writeVersionFile") {
+    doLast {
+        val version = System.getenv("VERSION") ?: "no_version"
+        file("$projectDir/src/main/resources/version.properties").writeText("version=$version")
+    }
+}
+tasks.build.get().dependsOn("writeVersionFile")
+
 dependencies {
+    // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    // Logging
+    implementation("ch.qos.logback.contrib:logback-json-classic:0.1.5")
+    implementation("ch.qos.logback.contrib:logback-jackson:0.1.5")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.0.1")
+
+    // AWS
     implementation("software.amazon.awssdk:dynamodb:2.17.128")
 }
