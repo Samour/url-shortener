@@ -17,6 +17,9 @@ Parameters:
   FEDnsName:
     Description: Full DNS name for FE access
     Type: String
+  ACMHostedZoneId:
+    Description: Hosted Zone ID to create ACM validation records
+    Type: String
   CFCertificateArn:
     Description: ARN of TLS certificate to use for CloudFront distribution
     Type: String
@@ -155,6 +158,20 @@ Resources:
           Value: !Ref ProjectPhase
 
   # Load Balancer/Ingress
+  APICertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref APIDnsName
+      DomainValidationOptions:
+        - DomainName: !Ref APIDnsName
+          HostedZoneId: !Ref ACMHostedZoneId
+      ValidationMethod: DNS
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
   PublicLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -176,12 +193,14 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       LoadBalancerArn: !Ref PublicLoadBalancer
-      Protocol: HTTP
-      Port: 80
+      Protocol: HTTPS
+      Port: 443
       DefaultActions:
         - Type: fixed-response
           FixedResponseConfig:
             StatusCode: 404
+      Certificates:
+        - CertificateArn: !Ref APICertificate
 
   ApplicationTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
