@@ -216,7 +216,7 @@ Resources:
       Conditions:
         - Field: path-pattern
           Values:
-            - !Sub "/{ServiceName}/*"
+            - !Sub "/${ServiceName}/*"
       Actions:
         - Type: forward
           TargetGroupArn: !Ref ApplicationTargetGroup
