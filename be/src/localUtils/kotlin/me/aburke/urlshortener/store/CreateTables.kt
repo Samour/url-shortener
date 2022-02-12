@@ -1,10 +1,7 @@
 package me.aburke.urlshortener.store
 
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest
-import software.amazon.awssdk.services.dynamodb.model.KeyType
-import software.amazon.awssdk.services.dynamodb.model.ProjectionType
-import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType
+import software.amazon.awssdk.services.dynamodb.model.*
 import java.net.URI
 import java.util.function.Consumer
 
@@ -24,10 +21,8 @@ fun main(args: Array<String>) {
         } catch (e: Throwable) {
             dynamoDbClient.createTable { b ->
                 b.tableName(fullName)
-                    .provisionedThroughput { t ->
-                        t.readCapacityUnits(10)
-                            .writeCapacityUnits(10)
-                    }.let { _ ->
+                    .billingMode(BillingMode.PAY_PER_REQUEST)
+                    .let { _ ->
                         additional?.let { it(b) }
                     }
             }
@@ -46,10 +41,6 @@ fun main(args: Array<String>) {
                 .keySchema(Consumer { k ->
                     k.attributeName("canonicalUsername").keyType(KeyType.HASH)
                 }).projection { p -> p.projectionType(ProjectionType.ALL) }
-                .provisionedThroughput { t ->
-                    t.readCapacityUnits(10)
-                        .writeCapacityUnits(10)
-                }
         })
     }
 }

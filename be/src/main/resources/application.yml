@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /${SERVICE_NAME}
+
 dynamodb:
   tables:
     user:

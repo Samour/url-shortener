@@ -216,7 +216,7 @@ Resources:
       Conditions:
         - Field: path-pattern
           Values:
-            - "/actuator/*"
+            - !Sub "/{ServiceName}/*"
       Actions:
         - Type: forward
           TargetGroupArn: !Ref ApplicationTargetGroup
@@ -230,6 +230,33 @@ Resources:
         DNSName: !GetAtt PublicLoadBalancer.DNSName
         HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
       Type: A
+
+  # Dynamo tables
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${ServiceName}-user"
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: canonicalUsername
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: !Sub "${ServiceName}-user-canonical-username"
+          KeySchema:
+            - AttributeName: canonicalUsername
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
 
   # ECS Deployment
   ContainerLogGroup:
@@ -287,11 +314,45 @@ Resources:
         - Key: Phase
           Value: !Ref ProjectPhase
 
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ServiceName}-task-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "dynamodb:BatchGetItem"
+                  - "dynamodb:BatchWriteItem"
+                  - "dynamodb:DeleteItem"
+                  - "dynamodb:DescribeTable"
+                  - "dynamodb:GetItem"
+                  - "dynamodb:PutItem"
+                  - "dynamodb:Query"
+                  - "dynamodb:Scan"
+                  - "dynamodb:UpdateItem"
+                Resource:
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-user"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-user/index/*"
+
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Ref ServiceName
       ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
       NetworkMode: awsvpc
       ContainerDefinitions:
         - Name: !Ref ServiceName
@@ -300,6 +361,9 @@ Resources:
               - ":"
               - - Fn::ImportValue: !Sub "${ServiceName}-ecr-uri"
                 - !Ref Version
+          Environment:
+            - Name: SERVICE_NAME
+              Value: !Ref ServiceName
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:
