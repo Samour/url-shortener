@@ -1,7 +1,7 @@
 import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import {Box, Button, Container, Grid} from '@mui/material';
 import LoginForm from './LoginForm';
-import {useNavigate} from 'react-router-dom';
 
 const LoginView = (): JSX.Element => {
   const navigate = useNavigate();
