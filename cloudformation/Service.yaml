@@ -277,6 +277,23 @@ Resources:
         - Key: Phase
           Value: !Ref ProjectPhase
 
+  SessionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${ServiceName}-session"
+      KeySchema:
+        - AttributeName: sessionId
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: sessionId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
   # ECS Deployment
   ContainerLogGroup:
     Type: AWS::Logs::LogGroup
@@ -365,6 +382,7 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-user"
                   - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-user/index/*"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-session"
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition

@@ -43,4 +43,12 @@ fun main(args: Array<String>) {
                 }).projection { p -> p.projectionType(ProjectionType.ALL) }
         })
     }
+
+    createTable("session") { b ->
+        b.attributeDefinitions(
+            Consumer { a -> a.attributeName("sessionId").attributeType(ScalarAttributeType.S) }
+        ).keySchema(Consumer { k ->
+            k.attributeName("sessionId").keyType(KeyType.HASH)
+        })
+    }
 }

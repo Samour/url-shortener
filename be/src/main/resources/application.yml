@@ -7,3 +7,5 @@ dynamodb:
     user:
       tableName: ${SERVICE_NAME}-user
       canonicalUsernameIndex: ${SERVICE_NAME}-user-canonical-username
+    session:
+      tableName: ${SERVICE_NAME}-session

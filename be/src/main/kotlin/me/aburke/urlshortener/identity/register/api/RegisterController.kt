@@ -20,7 +20,7 @@ class RegisterController(private val registerUserService: RegisterUserService) {
         @RequestAttribute("loggingContext") loggingContext: LoggingContext,
         @RequestBody registerRequest: RegisterUserRequest,
     ): RegisterUserResponse {
-        val contextWithAction = loggingContext + ("apiAction" to "createUser")
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "createUser")
         contextWithAction.writeLog { logger.info("API call received to create user") }
 
         return registerUserService.registerUser(

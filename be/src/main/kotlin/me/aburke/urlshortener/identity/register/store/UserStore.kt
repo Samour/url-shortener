@@ -9,12 +9,12 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 @Repository
 class UserStore(private val dynamoDbClient: DynamoDbClient, userStoreProperties: UserStoreProperties) {
 
-    private val tableName: String = userStoreProperties.tableName
-    private val canonicalUsernameIndex: String = userStoreProperties.canonicalUsernameIndex
-
     companion object {
         private val logger = LoggerFactory.getLogger(UserStore::class.java)
     }
+
+    private val tableName: String = userStoreProperties.tableName
+    private val canonicalUsernameIndex: String = userStoreProperties.canonicalUsernameIndex
 
     fun insertUser(user: UserModel, loggingContext: LoggingContext) {
         loggingContext.with(
