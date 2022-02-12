@@ -26,7 +26,8 @@ class WebFilterConfig {
                 filter = AuthenticationFilter(
                     excludePaths = listOf(
                         "/v1/identity/register",
-                        "/v1/identity/login"
+                        "/v1/identity/login",
+                        "/actuator/*",
                     ),
                     objectMapper = objectMapper,
                     sessionStore = sessionStore,
