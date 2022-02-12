@@ -161,9 +161,9 @@ Resources:
   APICertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: !Ref APIDnsName
+      DomainName: !Ref ApiDnsName
       DomainValidationOptions:
-        - DomainName: !Ref APIDnsName
+        - DomainName: !Ref ApiDnsName
           HostedZoneId: !Ref ACMHostedZoneId
       ValidationMethod: DNS
       Tags:
