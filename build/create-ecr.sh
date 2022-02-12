@@ -20,7 +20,9 @@ aws cloudformation --output json \
   --change-set-type $_CHANGE_SET_TYPE \
   --template-body file://../cloudformation/Repositories.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
-  --parameters ParameterKey=ServiceName,ParameterValue=$SERVICE_NAME \
-    ParameterKey=ProjectPhase,ParameterValue=$PROJECT_PHASE >/dev/null
+  --parameters ParameterKey=ServiceName,ParameterValue="$SERVICE_NAME" \
+    ParameterKey=ProjectPhase,ParameterValue="$PROJECT_PHASE" >/dev/null
 
+echo
 echo Change set created: $CHANGE_SET_NAME
+echo

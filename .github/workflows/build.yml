@@ -133,6 +133,7 @@ jobs:
     needs:
       - version
       - publish_be
+      - publish_fe
     steps:
       - name: Checkout
         uses: actions/checkout@v2

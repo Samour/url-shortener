@@ -5,7 +5,7 @@ cd "${0%/*}"
 
 . ./VARS
 
-CS_VERSION=$(echo -n "$VERSION" | tr '_' '-')
+CHANGE_SET_TS=$(date -u +%FT%H-%M-%S)
 CHANGE_SET_NAME="${SERVICE_NAME}-app-${CS_VERSION}"
 
 _CHANGE_SET_TYPE=UPDATE
@@ -14,19 +14,16 @@ if [ "$CHANGE_SET_TYPE" = "CREATE" ]; then
 fi
 
 aws cloudformation --output json \
+  --region us-east-1 \
   create-change-set \
-  --stack-name ${SERVICE_NAME}-app \
+  --stack-name ${SERVICE_NAME}-certificates \
   --change-set-name $CHANGE_SET_NAME \
   --change-set-type $_CHANGE_SET_TYPE \
-  --template-body file://../cloudformation/Service.yaml \
-  --capabilities CAPABILITY_NAMED_IAM \
+  --template-body file://../cloudformation/Certificates.yaml \
   --parameters ParameterKey=ServiceName,ParameterValue="$SERVICE_NAME" \
     ParameterKey=ProjectPhase,ParameterValue="$PROJECT_PHASE" \
-    ParameterKey=Version,ParameterValue="$VERSION" \
-    ParameterKey=DnsZoneName,ParameterValue="$DNS_ZONE_NAME" \
-    ParameterKey=ApiDnsName,ParameterValue="$API_DNS_NAME" \
     ParameterKey=FEDnsName,ParameterValue="$FE_DNS_NAME" \
-    ParameterKey=CFCertificateArn,ParameterValue="$CF_CERTIFICATE_ARN" >/dev/null
+    ParameterKey=ACMHostedZoneId,ParameterValue="$ACM_HOSTED_ZONE_ID" > /dev/null
 
 echo
 echo Change set created: $CHANGE_SET_NAME

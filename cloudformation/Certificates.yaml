@@ -1,0 +1,35 @@
+Parameters:
+  ServiceName:
+    Description: Name for ECR repo
+    Type: String
+  ProjectPhase:
+    Description: Phase of the project
+    Type: String
+  FEDnsName:
+    Description: Full DNS name for FE access
+    Type: String
+  ACMHostedZoneId:
+    Description: Hosted Zone ID to create ACM validation records
+    Type: String
+
+Resources:
+  FECertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref FEDnsName
+      DomainValidationOptions:
+        - DomainName: !Ref FEDnsName
+          HostedZoneId: !Ref ACMHostedZoneId
+      ValidationMethod: DNS
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
+Outputs:
+  CertificateArn:
+    Description: ARN for certificate for serving FE content
+    Value: !Ref FECertificate
+    Export:
+      Name: !Sub "${ServiceName}-fe-cert-arn"
