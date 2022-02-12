@@ -3,9 +3,11 @@ package me.aburke.urlshortener.logging
 import org.slf4j.MDC
 
 class LoggingContextImpl(
-    private val details: MutableMap<String, String?> = mutableMapOf(),
+    details: Map<String, String?> = emptyMap(),
     private val canonicalContext: LoggingContextImpl? = null,
 ) : LoggingContext {
+
+    private val details: MutableMap<String, String?> = details.toMutableMap()
 
     override fun plus(append: Pair<String, String?>): LoggingContext =
         LoggingContextImpl(details.plus(append).toMutableMap(), canonicalContext)

@@ -16,13 +16,15 @@ class LoggingInterceptor : Filter {
     }
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
-        val canonicalContext = LoggingContextImpl(
-            mutableMapOf(
-                "traceId" to UUID.randomUUID().toString(),
-                "endpoint" to (request as? HttpServletRequest)?.servletPath,
-            )
+        val attributes = mapOf(
+            "traceId" to UUID.randomUUID().toString(),
+            "endpoint" to (request as? HttpServletRequest)?.servletPath,
         )
-        val loggingContext = LoggingContextImpl(canonicalContext = canonicalContext)
+        val canonicalContext = LoggingContextImpl(attributes)
+        val loggingContext = LoggingContextImpl(
+            details = attributes,
+            canonicalContext = canonicalContext,
+        )
         request?.setAttribute("loggingContext", loggingContext)
 
         canonicalContext.writeLog { logger.info("HTTP Request received") }
