@@ -3,20 +3,30 @@ package me.aburke.urlshortener.identity.register.api
 import me.aburke.urlshortener.identity.register.dto.RegisterUserRequest
 import me.aburke.urlshortener.identity.register.dto.RegisterUserResponse
 import me.aburke.urlshortener.identity.register.service.RegisterUserService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import me.aburke.urlshortener.logging.LoggingContext
+import org.slf4j.LoggerFactory
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/identity/register")
 class RegisterController(private val registerUserService: RegisterUserService) {
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(RegisterController::class.java)
+    }
+
     @PostMapping
-    fun createUser(@RequestBody registerRequest: RegisterUserRequest): RegisterUserResponse {
+    fun createUser(
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestBody registerRequest: RegisterUserRequest,
+    ): RegisterUserResponse {
+        val contextWithAction = loggingContext + ("apiAction" to "createUser")
+        contextWithAction.writeLog { logger.info("API call received to create user") }
+
         return registerUserService.registerUser(
             username = registerRequest.username,
-            rawPassword = registerRequest.password
+            rawPassword = registerRequest.password,
+            loggingContext = loggingContext,
         ).let {
             RegisterUserResponse(
                 userId = it.id,

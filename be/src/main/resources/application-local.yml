@@ -1,2 +1,6 @@
 dynamodb:
   url: 'http://localhost:8000'
+
+logging:
+  level:
+    me.aburke.urlshortener: debug
