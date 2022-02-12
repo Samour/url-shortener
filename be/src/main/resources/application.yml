@@ -9,3 +9,9 @@ dynamodb:
       canonicalUsernameIndex: ${SERVICE_NAME}-user-canonical-username
     session:
       tableName: ${SERVICE_NAME}-session
+
+web:
+  cors:
+    allowedOrigins:
+      - 'http://localhost:3000'
+      - 'https://${FE_DNS_NAME}'

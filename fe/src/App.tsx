@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import './App.css';
@@ -8,6 +8,7 @@ import RegisterView from './views/RegisterView';
 import AppLoadingView from './views/AppLoadingView';
 import {AppState} from './store/model';
 import {AuthStatus} from './store/model/AuthenticatedUser';
+import {useUserAuthService} from './services/userAuthService';
 
 interface State {
   enableRouting: boolean;
@@ -19,6 +20,9 @@ const selector = (state: AppState): State => ({
 
 function App() {
   const {enableRouting} = useSelector(selector);
+  const userAuthService = useUserAuthService();
+
+  useEffect(() => userAuthService.initialiseUserState(), []);
 
   if (enableRouting) {
     return (

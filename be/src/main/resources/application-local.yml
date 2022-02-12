@@ -1,6 +1,11 @@
 dynamodb:
   url: 'http://localhost:8000'
 
+web:
+  cors:
+    allowedOrigins:
+      - 'http://localhost:3000'
+
 logging:
   level:
     me.aburke.urlshortener: debug

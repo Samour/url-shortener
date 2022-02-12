@@ -403,6 +403,8 @@ Resources:
               Value: !Ref ServiceName
             - Name: SPRING_PROFILES_ACTIVE
               Value: json-logging
+            - Name: FE_DNS_NAME
+              Value: !Ref FEDnsName
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:
@@ -519,6 +521,16 @@ Resources:
               - GET
               - HEAD
             PathPattern: /index.html
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+            ViewerProtocolPolicy: redirect-to-https
+          - TargetOriginId: !Sub "${ServiceName}-cf-origin"
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            PathPattern: /config.json
             CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
             ViewerProtocolPolicy: redirect-to-https
       Tags:

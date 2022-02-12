@@ -9,10 +9,10 @@ import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class LoggingInterceptor : Filter {
+class LoggingFilter : Filter {
 
     companion object {
-        private val logger = LoggerFactory.getLogger(LoggingInterceptor::class.java)
+        private val logger = LoggerFactory.getLogger(LoggingFilter::class.java)
     }
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
