@@ -19,6 +19,7 @@ class WebFilterConfig {
         .apply {
             allowedOrigins = corsConfig.allowedOrigins
             addAllowedMethod("*")
+            addAllowedHeader("*")
             allowCredentials = true
         }.let {
             val source = UrlBasedCorsConfigurationSource()

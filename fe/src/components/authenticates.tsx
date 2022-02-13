@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
-import {Navigate, useNavigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {AuthStatus} from 'src/store/model/AuthenticatedUser';
 import {AppState} from 'src/store/model';
 
@@ -40,7 +40,6 @@ const authenticated = (params: Params = {}) => <P extends object>(Delegate: Reac
     } = params;
 
     const {authStatus} = useSelector(selector);
-    const navigate = useNavigate();
 
     if (mayAccess(auth, authStatus)) {
       return <Delegate {...props}/>;

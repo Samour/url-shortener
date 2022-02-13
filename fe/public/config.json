@@ -1,3 +1,6 @@
 {
-  "apiEndpoint": "https://api.urls.samour.net/url-shortener/"
+  "apiEndpoint": "http://localhost:8080/urls-local/",
+  "registerConfig": {
+    "minPasswordLength": 8
+  }
 }

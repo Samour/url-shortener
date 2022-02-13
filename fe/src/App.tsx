@@ -22,8 +22,9 @@ function App() {
   const {enableRouting} = useSelector(selector);
   const userAuthService = useUserAuthService();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => userAuthService.initialiseUserState(), []);
+  useEffect(() => {
+    userAuthService.initialiseUserState().catch(console.log);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (enableRouting) {
     return (

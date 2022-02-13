@@ -4,10 +4,13 @@ import {AuthInfoResponse} from 'src/dto/AuthInfoResponse';
 import {AppState} from 'src/store/model';
 import {userAuthenticatedMutation} from 'src/store/mutations/authenticatedUser/UserAuthenticatedMutation';
 import {userAnonymousMutation} from 'src/store/mutations/authenticatedUser/UserAnonymousMutation';
+import {LoginRequest, LoginResponse} from 'src/dto/LoginDtos';
 import {HttpService, useHttpService} from './httpService';
 
 export interface UserAuthService {
-  initialiseUserState(): void;
+  initialiseUserState(): Promise<void>;
+
+  logIn(username: string, password: string): Promise<void>;
 }
 
 class UserAuthServiceImpl implements UserAuthService {
@@ -15,10 +18,21 @@ class UserAuthServiceImpl implements UserAuthService {
   constructor(private readonly httpService: HttpService, private readonly store: Store<AppState>) {
   }
 
-  initialiseUserState(): void {
-    this.httpService.get<AuthInfoResponse>('/v1/identity/info')
-      .then((r) => this.store.dispatch(userAuthenticatedMutation(r)))
-      .catch((e) => this.store.dispatch(userAnonymousMutation()));
+  async initialiseUserState(): Promise<void> {
+    try {
+      const result = await this.httpService.get<AuthInfoResponse>('/v1/identity/info');
+      this.store.dispatch(userAuthenticatedMutation(result));
+    } catch (e) {
+      this.store.dispatch(userAnonymousMutation());
+    }
+  }
+
+  async logIn(username: string, password: string): Promise<void> {
+    const result = await this.httpService.post<LoginRequest, LoginResponse>(
+      '/v1/identity/login',
+      {username, password},
+    );
+    this.store.dispatch(userAuthenticatedMutation(result));
   }
 }
 
