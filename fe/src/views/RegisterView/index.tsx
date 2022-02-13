@@ -24,6 +24,11 @@ const RegisterView = (): JSX.Element => {
   const onUsernameChange = (e: any) => setUsername(e.target.value);
   const onPasswordChange = (e: any) => setPassword(e.target.value);
   const onConfirmPasswordChange = (e: any) => setConfirmPassword(e.target.value);
+  const onSubmit = (e: any) => {
+    console.log('Submit handler called');
+    e.preventDefault();
+    submit();
+  };
   const onReturnClick = () => navigate('/login');
 
   return (
@@ -31,58 +36,60 @@ const RegisterView = (): JSX.Element => {
       <Box sx={{display: {xs: 'none', sm: 'block'}}}>
         <div className='spacer'/>
       </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Grid container justifyContent='center'>
-            <Grid item xs={12} md={8}>
-              <TextField
-                label='Username'
-                variant='standard'
-                fullWidth
-                value={username}
-                error={!!usernameError}
-                helperText={usernameError}
-                onChange={onUsernameChange}/>
+      <form onSubmit={onSubmit}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Grid container justifyContent='center'>
+              <Grid item xs={12} md={8}>
+                <TextField
+                  label='Username'
+                  variant='standard'
+                  fullWidth
+                  value={username}
+                  error={!!usernameError}
+                  helperText={usernameError}
+                  onChange={onUsernameChange}/>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container justifyContent='center'>
-            <Grid item xs={12} md={8}>
-              <TextField
-                label='Password'
-                type='password'
-                variant='standard'
-                fullWidth
-                value={password}
-                error={!!passwordError}
-                helperText={passwordError}
-                onChange={onPasswordChange}/>
+          <Grid item xs={12}>
+            <Grid container justifyContent='center'>
+              <Grid item xs={12} md={8}>
+                <TextField
+                  label='Password'
+                  type='password'
+                  variant='standard'
+                  fullWidth
+                  value={password}
+                  error={!!passwordError}
+                  helperText={passwordError}
+                  onChange={onPasswordChange}/>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container justifyContent='center'>
-            <Grid item xs={12} md={8}>
-              <TextField
-                label='Confirm Password'
-                type='password'
-                variant='standard'
-                fullWidth
-                value={confirmPassword}
-                error={!!confirmPasswordError}
-                helperText={confirmPasswordError}
-                onChange={onConfirmPasswordChange}/>
+          <Grid item xs={12}>
+            <Grid container justifyContent='center'>
+              <Grid item xs={12} md={8}>
+                <TextField
+                  label='Confirm Password'
+                  type='password'
+                  variant='standard'
+                  fullWidth
+                  value={confirmPassword}
+                  error={!!confirmPasswordError}
+                  helperText={confirmPasswordError}
+                  onChange={onConfirmPasswordChange}/>
+              </Grid>
             </Grid>
           </Grid>
+          <Grid item xs={12} justifyContent='center' display='flex'>
+            <Button type='submit' disabled={submitInProgress} onClick={submit}>Register Account</Button>
+          </Grid>
+          <Grid item xs={12} justifyContent='center' display='flex'>
+            <Button color='secondary' onClick={onReturnClick}>Back to login</Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12} justifyContent='center' display='flex'>
-          <Button disabled={submitInProgress} onClick={submit}>Register Account</Button>
-        </Grid>
-        <Grid item xs={12} justifyContent='center' display='flex'>
-          <Button color='secondary' onClick={onReturnClick}>Back to login</Button>
-        </Grid>
-      </Grid>
+      </form>
     </Container>
   );
 };
