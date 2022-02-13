@@ -5,6 +5,8 @@ import {AppState} from 'src/store/model';
 import {userAuthenticatedMutation} from 'src/store/mutations/authenticatedUser/UserAuthenticatedMutation';
 import {userAnonymousMutation} from 'src/store/mutations/authenticatedUser/UserAnonymousMutation';
 import {LoginRequest, LoginResponse} from 'src/dto/LoginDtos';
+import {ApiError, ApiErrorCode} from 'src/errors/ApiError';
+import {UserLoginError} from 'src/errors/UserLoginError';
 import {HttpService, useHttpService} from './httpService';
 
 export interface UserAuthService {
@@ -28,11 +30,19 @@ class UserAuthServiceImpl implements UserAuthService {
   }
 
   async logIn(username: string, password: string): Promise<void> {
-    const result = await this.httpService.post<LoginRequest, LoginResponse>(
-      '/v1/identity/login',
-      {username, password},
-    );
-    this.store.dispatch(userAuthenticatedMutation(result));
+    try {
+      const result = await this.httpService.post<LoginRequest, LoginResponse>(
+        '/v1/identity/login',
+        {username, password},
+      );
+      this.store.dispatch(userAuthenticatedMutation(result));
+    } catch (e) {
+      if (e instanceof ApiError && e.errorCode === ApiErrorCode.LOGIN_FAILURE) {
+        throw new UserLoginError();
+      } else {
+        throw e;
+      }
+    }
   }
 }
 
