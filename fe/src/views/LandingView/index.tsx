@@ -1,12 +1,7 @@
-import {useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React from 'react';
+import authenticated from 'src/components/authenticates';
 
 const LandingView = (): JSX.Element => {
-  const navigate = useNavigate();
-  // Only login page is currently implemented
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => navigate('/login'), []);
-
   return (
     <div>
       <h1>User is authenticated!</h1>
@@ -14,4 +9,4 @@ const LandingView = (): JSX.Element => {
   );
 };
 
-export default LandingView;
+export default authenticated()(LandingView);

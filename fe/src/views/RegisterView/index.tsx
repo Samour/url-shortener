@@ -1,6 +1,7 @@
 import React from 'react';
-import {Box, Button, Container, Grid, TextField} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
+import {Box, Button, Container, Grid, TextField} from '@mui/material';
+import authenticated, {AuthRequired} from 'src/components/authenticates';
 import './index.css';
 
 const RegisterView = (): JSX.Element => {
@@ -46,4 +47,7 @@ const RegisterView = (): JSX.Element => {
   );
 };
 
-export default RegisterView;
+export default authenticated({
+  auth: AuthRequired.UNAUTHENTICATED,
+  navigateOnFailure: '/',
+})(RegisterView);

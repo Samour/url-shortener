@@ -1,6 +1,7 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Box, Button, Container, Grid} from '@mui/material';
+import authenticated, {AuthRequired} from 'src/components/authenticates';
 import LoginForm from './LoginForm';
 
 const LoginView = (): JSX.Element => {
@@ -32,4 +33,7 @@ const LoginView = (): JSX.Element => {
   );
 };
 
-export default LoginView;
+export default authenticated({
+  auth: AuthRequired.UNAUTHENTICATED,
+  navigateOnFailure: '/',
+})(LoginView);
