@@ -46,6 +46,7 @@ const RegisterView = (): JSX.Element => {
                   variant='standard'
                   fullWidth
                   value={username}
+                  disabled={submitInProgress}
                   error={!!usernameError}
                   helperText={usernameError}
                   onChange={onUsernameChange}/>
@@ -61,6 +62,7 @@ const RegisterView = (): JSX.Element => {
                   variant='standard'
                   fullWidth
                   value={password}
+                  disabled={submitInProgress}
                   error={!!passwordError}
                   helperText={passwordError}
                   onChange={onPasswordChange}/>
@@ -76,6 +78,7 @@ const RegisterView = (): JSX.Element => {
                   variant='standard'
                   fullWidth
                   value={confirmPassword}
+                  disabled={submitInProgress}
                   error={!!confirmPasswordError}
                   helperText={confirmPasswordError}
                   onChange={onConfirmPasswordChange}/>

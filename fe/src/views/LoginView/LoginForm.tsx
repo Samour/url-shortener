@@ -33,6 +33,7 @@ const LoginForm = (): JSX.Element => {
                 variant='standard'
                 fullWidth
                 value={username}
+                disabled={submitInProgress}
                 error={!!usernameError}
                 helperText={usernameError}
                 onChange={onUsernameChange}/>
@@ -48,6 +49,7 @@ const LoginForm = (): JSX.Element => {
                 variant='standard'
                 fullWidth
                 value={password}
+                disabled={submitInProgress}
                 error={!!passwordError}
                 helperText={passwordError}
                 onChange={onPasswordChange}/>
