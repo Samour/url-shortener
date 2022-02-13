@@ -22,7 +22,7 @@ class HttpServiceImpl implements HttpService {
   constructor(private readonly store: Store<AppState>) {
   }
 
-  private getBaseUrl(): Promise<string> {
+  private async buildUrl(endpoint: string): Promise<string> {
     if (this.baseUrl === null) {
       this.baseUrl = fetch('/config.json')
         .then((r) => r.json())
@@ -31,23 +31,24 @@ class HttpServiceImpl implements HttpService {
           return config.apiEndpoint;
         });
     }
-    return this.baseUrl;
+    const baseUrl = await this.baseUrl;
+    const url = new URL(`${baseUrl}/${endpoint}`);
+    url.pathname = url.pathname.replaceAll(/\/\/+/g, "/");
+    return url.toString();
   }
 
   async get<T>(endpoint: string): Promise<T> {
-    const baseUrl = await this.getBaseUrl();
+    const url = await this.buildUrl(endpoint);
     return this.executeCall(() => fetch(
-      `${baseUrl}${endpoint}`,
-      {
-        credentials: 'include',
-      },
+      url,
+      {credentials: 'include'},
     ));
   }
 
   async post<B, T>(endpoint: string, body: B): Promise<T> {
-    const baseUrl = await this.getBaseUrl();
+    const url = await this.buildUrl(endpoint);
     return this.executeCall(() =>
-      fetch(`${baseUrl}${endpoint}`, {
+      fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
