@@ -9,6 +9,7 @@ env:
   AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: url-shortener
   S3_BUCKET: fe.url-shortener.samour.net
+  TARGET_ENV: dev
 
 jobs:
   version:
@@ -102,6 +103,9 @@ jobs:
           cache-dependency-path: fe
       - name: Install dependencies
         run: npm ci
+        working-directory: fe
+      - name: Configure FE
+        run: npm run config
         working-directory: fe
       - name: Build FE
         env:
