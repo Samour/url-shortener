@@ -27,13 +27,18 @@ class LoggingFilter : Filter {
         )
         request?.setAttribute("loggingContext", loggingContext)
 
-        canonicalContext.writeLog { logger.info("HTTP Request received") }
+        val additionalDetails = mapOf(
+            "webOrigin" to (request as? HttpServletRequest)?.getHeader("Origin")
+        );
+        canonicalContext.with(additionalDetails)
+            .writeLog { logger.info("HTTP Request received") }
 
         try {
             chain?.doFilter(request, response)
         } finally {
             canonicalContext.with(
-                "responseCode" to (response as? HttpServletResponse)?.status?.toString()
+                additionalDetails +
+                        ("responseCode" to (response as? HttpServletResponse)?.status?.toString())
             ).writeLog { logger.info("Request handling completed") }
         }
     }
