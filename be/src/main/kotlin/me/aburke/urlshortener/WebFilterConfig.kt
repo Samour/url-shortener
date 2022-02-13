@@ -15,6 +15,14 @@ import org.springframework.web.filter.CorsFilter
 class WebFilterConfig {
 
     @Bean
+    fun loggingFilter() = FilterRegistrationBean<LoggingFilter>()
+        .apply {
+            filter = LoggingFilter()
+            order = 1
+            urlPatterns = listOf("/*")
+        }
+
+    @Bean
     fun corsFilter(corsConfig: CorsConfig) = CorsConfiguration()
         .apply {
             allowedOrigins = corsConfig.allowedOrigins
@@ -25,15 +33,7 @@ class WebFilterConfig {
             val source = UrlBasedCorsConfigurationSource()
             source.registerCorsConfiguration("/**", it)
             FilterRegistrationBean(CorsFilter(source))
-        }.apply { order = 0 }
-
-    @Bean
-    fun loggingFilter() = FilterRegistrationBean<LoggingFilter>()
-        .apply {
-            filter = LoggingFilter()
-            order = 1
-            urlPatterns = listOf("/*")
-        }
+        }.apply { order = 2 }
 
     @Bean
     fun authorizationFilter(objectMapper: ObjectMapper, sessionStore: SessionStore) =
@@ -48,6 +48,6 @@ class WebFilterConfig {
                     objectMapper = objectMapper,
                     sessionStore = sessionStore,
                 )
-                order = 2
+                order = 3
             }
 }
