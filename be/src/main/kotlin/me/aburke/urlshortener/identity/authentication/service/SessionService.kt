@@ -60,4 +60,9 @@ class SessionService(
         SecureRandom().nextBytes(bytes)
         return Base64.getEncoder().encodeToString(bytes)
     }
+
+    fun endSession(sessionId: String, loggingContext: LoggingContext) {
+        sessionStore.deleteSession(sessionId, loggingContext)
+        loggingContext.writeLog { logger.info("Session removed from DB") }
+    }
 }

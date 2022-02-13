@@ -20,7 +20,7 @@ class SessionStore(private val dynamoDbClient: DynamoDbClient, sessionStorePrope
         loggingContext.with(
             mapOf(
                 "dbTable" to tableName,
-                "itemIdPrefix" to session.sessionId.substring(0, 8),
+                "itemIdPrefix" to session.sessionId.take(8),
             )
         ).writeLog { logger.debug("Inserting session into DB") }
 
@@ -41,7 +41,7 @@ class SessionStore(private val dynamoDbClient: DynamoDbClient, sessionStorePrope
         loggingContext.with(
             mapOf(
                 "dbTable" to tableName,
-                "itemIdPrefix" to sessionId.substring(0, 8),
+                "itemIdPrefix" to sessionId.take(8),
             )
         ).writeLog { logger.debug("Querying session by id") }
 
@@ -58,5 +58,19 @@ class SessionStore(private val dynamoDbClient: DynamoDbClient, sessionStorePrope
                     createdAt = Instant.parse(it["createdAt"]!!.s()),
                 )
             }
+    }
+
+    fun deleteSession(sessionId: String, loggingContext: LoggingContext) {
+        loggingContext.with(
+            mapOf(
+                "dbTable" to tableName,
+                "itemIdPrefix" to sessionId.take(8),
+            )
+        ).writeLog { logger.debug("Deleting session from DB") }
+
+        dynamoDbClient.deleteItem { b ->
+            b.tableName(tableName)
+                .key(mapOf("sessionId" to AttributeValue.builder().s(sessionId).build()))
+        }
     }
 }

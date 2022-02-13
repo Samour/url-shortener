@@ -13,6 +13,8 @@ export interface UserAuthService {
   initialiseUserState(): Promise<void>;
 
   logIn(username: string, password: string): Promise<void>;
+
+  logOut(): Promise<void>;
 }
 
 class UserAuthServiceImpl implements UserAuthService {
@@ -43,6 +45,11 @@ class UserAuthServiceImpl implements UserAuthService {
         throw e;
       }
     }
+  }
+
+  async logOut(): Promise<void> {
+    await this.httpService.post('/v1/identity/logout', {});
+    this.store.dispatch(userAnonymousMutation());
   }
 }
 

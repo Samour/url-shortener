@@ -4,6 +4,7 @@ import me.aburke.urlshortener.identity.IdentityConsts.SESSION_COOKIE_KEY
 import me.aburke.urlshortener.identity.authentication.dto.AuthInfoResponse
 import me.aburke.urlshortener.identity.authentication.dto.LoginRequest
 import me.aburke.urlshortener.identity.authentication.dto.LoginResponse
+import me.aburke.urlshortener.identity.authentication.dto.LogoutResponse
 import me.aburke.urlshortener.identity.authentication.service.SessionService
 import me.aburke.urlshortener.identity.authentication.store.SessionModel
 import me.aburke.urlshortener.logging.LoggingContext
@@ -48,6 +49,22 @@ class AuthenticationController(private val sessionService: SessionService) {
                 secure = true
                 isHttpOnly = true
             }
+
+    @PostMapping("/logout")
+    fun logOut(
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestAttribute("session") session: SessionModel,
+        httpServletResponse: HttpServletResponse,
+    ): LogoutResponse {
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "logout")
+        contextWithAction.writeLog { logger.info("Logout request received") }
+        sessionService.endSession(session.sessionId, contextWithAction)
+        httpServletResponse.addCookie(
+            createSessionCookie("").apply { maxAge = 0 }
+        )
+
+        return LogoutResponse()
+    }
 
     @GetMapping("/info")
     fun getAuthInfo(

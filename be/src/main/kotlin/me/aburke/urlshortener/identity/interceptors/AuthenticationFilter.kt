@@ -58,7 +58,7 @@ class AuthenticationFilter(
 
         val updatedLoggingContext = loggingContext.withAttributes(
             mapOf(
-                "sessionId" to session.sessionId.substring(0, 8),
+                "sessionId" to session.sessionId.take(8),
                 "userId" to session.userId,
                 "username" to session.username,
             )
