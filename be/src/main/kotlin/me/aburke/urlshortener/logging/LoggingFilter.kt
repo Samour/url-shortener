@@ -28,7 +28,8 @@ class LoggingFilter : Filter {
         request?.setAttribute("loggingContext", loggingContext)
 
         val additionalDetails = mapOf(
-            "webOrigin" to (request as? HttpServletRequest)?.getHeader("Origin")
+            "httpMethod" to (request as? HttpServletRequest)?.method,
+            "webOrigin" to (request as? HttpServletRequest)?.getHeader("Origin"),
         );
         canonicalContext.with(additionalDetails)
             .writeLog { logger.info("HTTP Request received") }
