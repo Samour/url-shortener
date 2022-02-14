@@ -12,7 +12,7 @@ cs-report() {
   aws cloudformation --output $1 \
     describe-change-set \
     --change-set-name $CHANGE_SET_NAME \
-    --stack-name ${SERVICE_NAME}-ecr
+    --stack-name ${SERVICE_NAME}-app
 }
 
 cs-status() {
