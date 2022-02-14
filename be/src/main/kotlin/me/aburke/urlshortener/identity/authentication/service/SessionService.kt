@@ -61,6 +61,11 @@ class SessionService(
         return Base64.getEncoder().encodeToString(bytes)
     }
 
+    fun loadActiveSession(sessionId: String, loggingContext: LoggingContext): SessionModel? {
+        loggingContext.writeLog { logger.debug("Searching DB for session key") }
+        return sessionStore.findSession(sessionId, loggingContext)
+    }
+
     fun endSession(sessionId: String, loggingContext: LoggingContext) {
         sessionStore.deleteSession(sessionId, loggingContext)
         loggingContext.writeLog { logger.info("Session removed from DB") }
