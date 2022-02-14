@@ -38,5 +38,5 @@ jobs:
       - name: Review Cloudformation Plan
         env:
           VERSION: ${{ inputs.version }}
-        run: ./describe-service-change.set.sh
+        run: ./describe-service-change-set.sh
         working-directory: build
