@@ -140,17 +140,12 @@ jobs:
           VERSION: ${{ needs.version.outputs.version }}
         run: aws s3 cp --recursive build/ s3://$S3_BUCKET/$VERSION/
 
-  start_deploy:
-    runs-on: ubuntu-latest
+  deploy:
     needs:
       - version
       - publish_be
       - publish_fe
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Trigger build
-        uses: ./.github/workflows/deploy.yml
-        with:
-          version: ${{ needs.version.outputs.version }}
-          target_environment: dev
+    uses: ./.github/workflows/deploy.yml
+    with:
+      version: ${{ needs.version.outputs.version }}
+      target_environment: dev
