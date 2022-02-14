@@ -45,6 +45,8 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.target_environment }}
+    needs:
+      - create_plan
     steps:
       - name: Checkout
         uses: actions/checkout@v2
