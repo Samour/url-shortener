@@ -5,6 +5,7 @@ import me.aburke.urlshortener.errors.ErrorResponse
 import me.aburke.urlshortener.identity.IdentityConsts.SESSION_COOKIE_KEY
 import me.aburke.urlshortener.identity.authentication.service.SessionCache
 import me.aburke.urlshortener.logging.LoggingContext
+import me.aburke.urlshortener.timer.Timer
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.util.AntPathMatcher
@@ -28,12 +29,14 @@ class AuthenticationFilter(
     private val antPathMatcher = AntPathMatcher()
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
+        val timer = Timer.start()
         val loggingContext = request?.getAttribute("loggingContext") as LoggingContext
         val path = (request as? HttpServletRequest)?.servletPath
         if (path != null && excludePaths.any { antPathMatcher.match(it, path) }) {
-            loggingContext.writeLog {
-                logger.debug("Endpoint is excluded from authorization; skipping authorization")
-            }
+            loggingContext.with("AuthenticationFilter.time" to timer.get().toString())
+                .writeLog {
+                    logger.debug("Endpoint is excluded from authorization; skipping authorization")
+                }
             chain?.doFilter(request, response)
             return
         }
@@ -43,14 +46,16 @@ class AuthenticationFilter(
             ?.value
 
         if (sessionId == null) {
-            loggingContext.writeLog { logger.debug("Session cookie absent; denying access") }
+            loggingContext.with("AuthenticationFilter.time" to timer.get().toString())
+                .writeLog { logger.debug("Session cookie absent; denying access") }
             writeUnauthorizedResponse(response)
             return
         }
 
         val session = sessionCache.loadActiveSession(sessionId, loggingContext)
         if (session == null) {
-            loggingContext.writeLog { logger.debug("Session key not found; denying access") }
+            loggingContext.with("AuthenticationFilter.time" to timer.get().toString())
+                .writeLog { logger.debug("Session key not found; denying access") }
             writeUnauthorizedResponse(response)
             return
         }
@@ -64,7 +69,8 @@ class AuthenticationFilter(
         )
         request.setAttribute("loggingContext", updatedLoggingContext)
         request.setAttribute("session", session)
-        updatedLoggingContext.writeLog { logger.debug("User authenticated; proceeding to controller") }
+        updatedLoggingContext.with("AuthenticationFilter.time" to timer.get().toString())
+            .writeLog { logger.debug("User authenticated; proceeding to controller") }
 
         chain?.doFilter(request, response)
     }

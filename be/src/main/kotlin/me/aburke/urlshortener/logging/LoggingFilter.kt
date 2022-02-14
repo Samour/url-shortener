@@ -1,5 +1,6 @@
 package me.aburke.urlshortener.logging
 
+import me.aburke.urlshortener.timer.Timer
 import org.slf4j.LoggerFactory
 import java.util.*
 import javax.servlet.Filter
@@ -16,6 +17,7 @@ class LoggingFilter : Filter {
     }
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
+        val timer = Timer.start()
         val attributes = mapOf(
             "traceId" to UUID.randomUUID().toString(),
             "endpoint" to (request as? HttpServletRequest)?.servletPath,
@@ -38,8 +40,10 @@ class LoggingFilter : Filter {
             chain?.doFilter(request, response)
         } finally {
             canonicalContext.with(
-                additionalDetails +
-                        ("responseCode" to (response as? HttpServletResponse)?.status?.toString())
+                additionalDetails + mapOf(
+                    "requestTime" to timer.get().toString(),
+                    "responseCode" to (response as? HttpServletResponse)?.status?.toString()
+                )
             ).writeLog { logger.info("Request handling completed") }
         }
     }
