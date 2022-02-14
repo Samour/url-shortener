@@ -1,7 +1,7 @@
 package me.aburke.urlshortener
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.aburke.urlshortener.identity.authentication.store.SessionStore
+import me.aburke.urlshortener.identity.authentication.service.SessionService
 import me.aburke.urlshortener.identity.interceptors.AuthenticationFilter
 import me.aburke.urlshortener.logging.LoggingFilter
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -36,7 +36,7 @@ class WebFilterConfig {
         }.apply { order = 2 }
 
     @Bean
-    fun authorizationFilter(objectMapper: ObjectMapper, sessionStore: SessionStore) =
+    fun authorizationFilter(objectMapper: ObjectMapper, sessionService: SessionService) =
         FilterRegistrationBean<AuthenticationFilter>()
             .apply {
                 filter = AuthenticationFilter(
@@ -46,7 +46,7 @@ class WebFilterConfig {
                         "/actuator/*",
                     ),
                     objectMapper = objectMapper,
-                    sessionStore = sessionStore,
+                    sessionService = sessionService,
                 )
                 order = 3
             }
