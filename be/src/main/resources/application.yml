@@ -15,3 +15,7 @@ web:
     allowedOrigins:
       - 'http://localhost:3000'
       - 'https://${FE_DNS_NAME}'
+
+cache:
+  sessions:
+    ttl: PT3M

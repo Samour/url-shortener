@@ -17,7 +17,7 @@ class SessionService(
     private val passwordEncoder: PasswordEncoder,
     private val userStore: UserStore,
     private val sessionStore: SessionStore,
-) {
+) : ActiveSessionLoader {
 
     companion object {
         private val logger = LoggerFactory.getLogger(SessionService::class.java)
@@ -61,7 +61,7 @@ class SessionService(
         return Base64.getEncoder().encodeToString(bytes)
     }
 
-    fun loadActiveSession(sessionId: String, loggingContext: LoggingContext): SessionModel? {
+    override fun loadActiveSession(sessionId: String, loggingContext: LoggingContext): SessionModel? {
         loggingContext.writeLog { logger.debug("Searching DB for session key") }
         return sessionStore.findSession(sessionId, loggingContext)
     }

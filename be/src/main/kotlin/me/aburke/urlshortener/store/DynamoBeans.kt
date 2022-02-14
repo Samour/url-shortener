@@ -6,7 +6,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.net.URI
 
 @Configuration
-class DynamoConfig {
+class DynamoBeans {
 
     @Bean
     fun dynamoDbClient(dynamoProperties: DynamoProperties) = DynamoDbClient.builder()

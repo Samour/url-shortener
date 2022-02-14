@@ -1,8 +1,9 @@
-package me.aburke.urlshortener
+package me.aburke.urlshortener.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import java.time.Duration
 
-@ConfigurationProperties("web.cors")
+@ConfigurationProperties("cache.sessions")
 @ConstructorBinding
-data class CorsConfig(val allowedOrigins: List<String>?)
+data class SessionCacheConfig(val ttl: Duration)

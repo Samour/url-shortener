@@ -3,7 +3,7 @@ package me.aburke.urlshortener.identity.interceptors
 import com.fasterxml.jackson.databind.ObjectMapper
 import me.aburke.urlshortener.errors.ErrorResponse
 import me.aburke.urlshortener.identity.IdentityConsts.SESSION_COOKIE_KEY
-import me.aburke.urlshortener.identity.authentication.service.SessionService
+import me.aburke.urlshortener.identity.authentication.service.SessionCache
 import me.aburke.urlshortener.logging.LoggingContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse
 class AuthenticationFilter(
     private val excludePaths: Collection<String>,
     private val objectMapper: ObjectMapper,
-    private val sessionService: SessionService,
+    private val sessionCache: SessionCache,
 ) : Filter {
 
     companion object {
@@ -48,7 +48,7 @@ class AuthenticationFilter(
             return
         }
 
-        val session = sessionService.loadActiveSession(sessionId, loggingContext)
+        val session = sessionCache.loadActiveSession(sessionId, loggingContext)
         if (session == null) {
             loggingContext.writeLog { logger.debug("Session key not found; denying access") }
             writeUnauthorizedResponse(response)

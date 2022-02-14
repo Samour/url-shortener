@@ -1,7 +1,7 @@
-package me.aburke.urlshortener
+package me.aburke.urlshortener.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import me.aburke.urlshortener.identity.authentication.service.SessionService
+import me.aburke.urlshortener.identity.authentication.service.SessionCache
 import me.aburke.urlshortener.identity.interceptors.AuthenticationFilter
 import me.aburke.urlshortener.logging.LoggingFilter
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -12,7 +12,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 
 @Configuration
-class WebFilterConfig {
+class WebFilterBeans {
 
     @Bean
     fun loggingFilter() = FilterRegistrationBean<LoggingFilter>()
@@ -36,7 +36,7 @@ class WebFilterConfig {
         }.apply { order = 2 }
 
     @Bean
-    fun authorizationFilter(objectMapper: ObjectMapper, sessionService: SessionService) =
+    fun authorizationFilter(objectMapper: ObjectMapper, sessionCache: SessionCache) =
         FilterRegistrationBean<AuthenticationFilter>()
             .apply {
                 filter = AuthenticationFilter(
@@ -46,7 +46,7 @@ class WebFilterConfig {
                         "/actuator/*",
                     ),
                     objectMapper = objectMapper,
-                    sessionService = sessionService,
+                    sessionCache = sessionCache,
                 )
                 order = 3
             }
