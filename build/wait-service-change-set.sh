@@ -20,3 +20,5 @@ while [ "$STACK_STATUS" = '"CREATE_IN_PROGRESS"' ]; do
   STACK_STATUS=`cs-status`
   WAIT_COUNT=$((WAIT_COUNT + 1))
 done
+
+echo "Change set in $STACK_STATUS; waiting"

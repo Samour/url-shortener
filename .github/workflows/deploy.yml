@@ -66,3 +66,8 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: ./execute-service-change-set.sh
         working-directory: build
+      - name: Wait for deploy completion
+        env:
+          VERSION: ${{ inputs.version }}
+        run: ./wait-service-stack-update.sh
+        working-directory: build

@@ -5,8 +5,7 @@ cd "${0%/*}"
 
 . ./VARS
 
-CHANGE_SET_TS=$(date -u +%FT%H-%M-%S)
-CHANGE_SET_NAME="${SERVICE_NAME}-ecr-${CHANGE_SET_TS}"
+source utils/change-set.sh
 
 _CHANGE_SET_TYPE=UPDATE
 if [ "$CHANGE_SET_TYPE" = "CREATE" ]; then

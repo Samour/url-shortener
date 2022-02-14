@@ -5,8 +5,7 @@ cd "${0%/*}"
 
 . ./VARS
 
-CS_VERSION=$(echo -n "$VERSION" | tr '_' '-')
-CHANGE_SET_NAME="${SERVICE_NAME}-app-${CS_VERSION}"
+source utils/change-set.sh
 
 aws cloudformation --output json \
   execute-change-set \
