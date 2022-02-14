@@ -150,7 +150,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Trigger build
-        uses: ./.github/workflows/build.yml
+        uses: ./.github/workflows/deploy.yml
         with:
           version: ${{ needs.version.outputs.version }}
           target_environment: dev
