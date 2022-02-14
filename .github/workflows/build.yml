@@ -149,3 +149,5 @@ jobs:
     with:
       version: ${{ needs.version.outputs.version }}
       target_environment: dev
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
