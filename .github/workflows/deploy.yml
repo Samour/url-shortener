@@ -35,6 +35,11 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: ./create-service.sh
         working-directory: build
+      - name: Wait for plan
+        env:
+          VERSION: ${{ inputs.version }}
+        run: ./wait-service-change-set.sh
+        working-directory: build
       - name: Review Cloudformation Plan
         env:
           VERSION: ${{ inputs.version }}
