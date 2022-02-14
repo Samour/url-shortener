@@ -28,6 +28,7 @@ while [ "$STACK_STATUS" != '"UPDATE_COMPLETE"' ] && \
   fi
 
   echo "Stack in $STACK_STATUS"
+  STACK_STATUS=`stack-status`
   WAIT_COUNT=$((WAIT_COUNT + 1))
   sleep 10
 done
