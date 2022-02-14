@@ -19,7 +19,7 @@ env:
   AWS_REGION: ap-southeast-2
 
 jobs:
-  cf_plan:
+  create_plan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,4 +39,17 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         run: ./describe-service-change-set.sh
+        working-directory: build
+
+  execute_plan:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.target_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Execute Plan
+        env:
+          VERSION: ${{ inputs.version }}
+        run: ./execute-service-change-set.sh
         working-directory: build
