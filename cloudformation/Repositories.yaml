@@ -71,18 +71,33 @@ Resources:
             Action:
               - "ecr:GetAuthorizationToken"
             Resource: "*"
+          - Sid: S3Upload
+            Effect: Allow
+            Action:
+              - "s3:PutObject"
+            Resource: !Sub "arn:aws:s3:::fe.${ServiceName}.samour.net/*"
           - Sid: ManageCFStack
             Effect: Allow
             Action:
               - "cloudformation:DescribeStacks"
               - "cloudformation:CreateChangeSet"
               - "cloudformation:DescribeChangeSet"
+              - "cloudformation:ExecuteChangeSet"
             Resource: !Sub "arn:aws:cloudformation:*:${AWS::AccountId}:stack/${ServiceName}-app/*"
-          - Sid: S3Upload
+          - Sid: ManageAppResources
             Effect: Allow
             Action:
-              - "s3:PutObject"
-            Resource: !Sub "arn:aws:s3:::fe.${ServiceName}.samour.net/*"
+              - "ec2:*"
+              - "acm:*"
+              - "elasticloadbalancing:*"
+              - "route53:*"
+              - "dynamodb:*"
+              - "cloudwatch:*"
+              - "ecs:*"
+              - "iam:*"
+              - "s3:*"
+              - "cloudfront:*"
+            Resource: "*"
 
 Outputs:
   Repository:
