@@ -5,17 +5,17 @@ server:
 dynamodb:
   tables:
     user:
-      tableName: ${SERVICE_NAME}-user
-      canonicalUsernameIndex: ${SERVICE_NAME}-user-canonical-username
+      table-name: ${SERVICE_NAME}-user
+      canonical-username-index: ${SERVICE_NAME}-user-canonical-username
     session:
-      tableName: ${SERVICE_NAME}-session
+      table-name: ${SERVICE_NAME}-session
     link-definition:
       table-name: ${SERVICE_NAME}-link-definition
       label-index: ${SERVICE_NAME}-link-definition-label
 
 web:
   cors:
-    allowedOrigins:
+    allowed-origins:
       - 'http://localhost:3000'
       - 'https://${FE_DNS_NAME}'
 

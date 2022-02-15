@@ -3,7 +3,7 @@ dynamodb:
 
 web:
   cors:
-    allowedOrigins:
+    allowed-origins:
       - 'http://localhost:3000'
 
 logging:
