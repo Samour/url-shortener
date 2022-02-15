@@ -1,11 +1,11 @@
-package me.aburke.urlshortener.identity.register.store
+package me.aburke.urlshortener.link.store
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
-@ConfigurationProperties("dynamodb.tables.user")
+@ConfigurationProperties("dynamodb.tables.link-definition")
 @ConstructorBinding
-data class UserStoreProperties(
+data class LinkDefinitionStoreConfig(
     val tableName: String,
-    val canonicalUsernameIndex: String,
+    val labelIndex: String,
 )

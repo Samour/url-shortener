@@ -19,6 +19,7 @@ class SessionStore(private val dynamoDbClient: DynamoDbClient, sessionStorePrope
     fun createSession(session: SessionModel, loggingContext: LoggingContext) {
         loggingContext.with(
             mapOf(
+                "dbAction" to "insert",
                 "dbTable" to tableName,
                 "itemIdPrefix" to session.sessionId.take(8),
             )
@@ -40,6 +41,7 @@ class SessionStore(private val dynamoDbClient: DynamoDbClient, sessionStorePrope
     fun findSession(sessionId: String, loggingContext: LoggingContext): SessionModel? {
         loggingContext.with(
             mapOf(
+                "dbAction" to "findOne",
                 "dbTable" to tableName,
                 "itemIdPrefix" to sessionId.take(8),
             )

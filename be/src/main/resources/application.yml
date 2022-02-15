@@ -9,6 +9,9 @@ dynamodb:
       canonicalUsernameIndex: ${SERVICE_NAME}-user-canonical-username
     session:
       tableName: ${SERVICE_NAME}-session
+    link-definition:
+      table-name: ${SERVICE_NAME}-link-definition
+      label-index: ${SERVICE_NAME}-link-definition-label
 
 web:
   cors:

@@ -7,18 +7,19 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 @Repository
-class UserStore(private val dynamoDbClient: DynamoDbClient, userStoreProperties: UserStoreProperties) {
+class UserStore(private val dynamoDbClient: DynamoDbClient, userStoreConfig: UserStoreConfig) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(UserStore::class.java)
     }
 
-    private val tableName: String = userStoreProperties.tableName
-    private val canonicalUsernameIndex: String = userStoreProperties.canonicalUsernameIndex
+    private val tableName: String = userStoreConfig.tableName
+    private val canonicalUsernameIndex: String = userStoreConfig.canonicalUsernameIndex
 
     fun insertUser(user: UserModel, loggingContext: LoggingContext) {
         loggingContext.with(
             mapOf(
+                "dbAction" to "insert",
                 "dbTable" to tableName,
                 "itemId" to user.id,
             )
@@ -40,6 +41,7 @@ class UserStore(private val dynamoDbClient: DynamoDbClient, userStoreProperties:
     fun findUserByUsername(username: String, loggingContext: LoggingContext): UserModel? {
         loggingContext.with(
             mapOf(
+                "dbAction" to "findOne",
                 "dbTable" to tableName,
                 "dbIndex" to canonicalUsernameIndex,
                 "queryKey" to username,

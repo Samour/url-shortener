@@ -51,4 +51,21 @@ fun main(args: Array<String>) {
             k.attributeName("sessionId").keyType(KeyType.HASH)
         })
     }
+
+    createTable("link-definition") { b ->
+        b.attributeDefinitions(
+            Consumer { a -> a.attributeName("userId").attributeType(ScalarAttributeType.S) },
+            Consumer { a -> a.attributeName("id").attributeType(ScalarAttributeType.S) },
+            Consumer { a -> a.attributeName("label").attributeType(ScalarAttributeType.S) },
+        ).keySchema(
+            Consumer { k -> k.attributeName("userId").keyType(KeyType.HASH) },
+            Consumer { k -> k.attributeName("id").keyType(KeyType.RANGE) },
+        ).localSecondaryIndexes(Consumer { i ->
+            i.indexName("$serviceName-link-definition-label")
+                .keySchema(
+                    Consumer { k -> k.attributeName("userId").keyType(KeyType.HASH) },
+                    Consumer { k -> k.attributeName("label").keyType(KeyType.RANGE) },
+                ).projection { p -> p.projectionType(ProjectionType.ALL) }
+        })
+    }
 }
