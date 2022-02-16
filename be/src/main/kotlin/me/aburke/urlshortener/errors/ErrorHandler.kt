@@ -31,6 +31,14 @@ class ErrorHandler {
         ).also { logError(request, it) { logger.info("Login attempt failed") } }
             .let { ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(it) }
 
+    @ExceptionHandler(ResourceNotFoundError::class)
+    fun handleResourceNotFound(e: ResourceNotFoundError, request: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        ErrorResponse(
+            errorType = "ResourceNotFound",
+            errorCode = "resource_not_found",
+        ).also { logError(request, it) { logger.info("Resource not found") } }
+            .let { ResponseEntity.status(HttpStatus.NOT_FOUND).body(it) }
+
     @ExceptionHandler(Throwable::class)
     fun handleException(e: Throwable, request: HttpServletRequest): ResponseEntity<ErrorResponse> =
         ErrorResponse(

@@ -1,10 +1,12 @@
 package me.aburke.urlshortener.link.store
 
+import me.aburke.urlshortener.errors.ResourceNotFoundError
 import me.aburke.urlshortener.logging.LoggingContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 
 @Repository
 class LinkDefinitionStore(
@@ -85,5 +87,66 @@ class LinkDefinitionStore(
                     linkTarget = it["linkTarget"]!!.s(),
                 )
             }
+    }
+
+    fun updateLabel(userId: String, id: String, label: String, loggingContext: LoggingContext) {
+        updateLinkDefinition(
+            userId,
+            id,
+            "label",
+            label,
+            loggingContext,
+        )
+    }
+
+    fun updateStatus(userId: String, id: String, status: LinkStatus, loggingContext: LoggingContext) {
+        updateLinkDefinition(
+            userId,
+            id,
+            "status",
+            status.name,
+            loggingContext,
+        )
+    }
+
+    private fun updateLinkDefinition(
+        userId: String,
+        id: String,
+        fieldName: String,
+        fieldValue: String,
+        loggingContext: LoggingContext,
+    ) {
+        val context = loggingContext.with(
+            mapOf(
+                "dbAction" to "updateItem",
+                "dbTable" to tableName,
+                "itemHashKey" to userId,
+                "itemRangeKey" to id,
+                "field" to fieldName,
+                "value" to fieldValue,
+            )
+        );
+        context.writeLog { logger.debug("Updating LinkDefinition item") }
+
+        try {
+            dynamoDbClient.updateItem { b ->
+                b.tableName(tableName)
+                    .key(
+                        mapOf(
+                            "userId" to AttributeValue.builder().s(userId).build(),
+                            "id" to AttributeValue.builder().s(id).build(),
+                        )
+                    ).updateExpression("SET #field = :value")
+                    .expressionAttributeNames(mapOf("#field" to fieldName))
+                    .expressionAttributeValues(
+                        mapOf(
+                            ":value" to AttributeValue.builder().s(fieldValue).build(),
+                        )
+                    ).conditionExpression("attribute_exists(userId)")
+            }
+        } catch (e: ConditionalCheckFailedException) {
+            context.writeLog { logger.info("Attempted to update item that does not exist") }
+            throw ResourceNotFoundError()
+        }
     }
 }

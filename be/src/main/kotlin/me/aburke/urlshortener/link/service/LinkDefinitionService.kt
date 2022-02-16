@@ -42,4 +42,12 @@ class LinkDefinitionService(private val linkDefinitionStore: LinkDefinitionStore
         loggingContext.writeLog { logger.info("Searching LinkDefinitions for user") }
         return linkDefinitionStore.getLinksSortedByLabelName(userId, onlyWithStatus, loggingContext)
     }
+
+    fun updateLinkLabel(userId: String, linkId: String, label: String, loggingContext: LoggingContext) {
+        linkDefinitionStore.updateLabel(userId, linkId, label, loggingContext)
+    }
+
+    fun updateLinkStatus(userId: String, linkId: String, status: LinkStatus, loggingContext: LoggingContext) {
+        linkDefinitionStore.updateStatus(userId, linkId, status, loggingContext)
+    }
 }

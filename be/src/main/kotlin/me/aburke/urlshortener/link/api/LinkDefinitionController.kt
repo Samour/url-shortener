@@ -1,9 +1,7 @@
 package me.aburke.urlshortener.link.api
 
 import me.aburke.urlshortener.identity.authentication.store.SessionModel
-import me.aburke.urlshortener.link.dto.CreateLinkRequest
-import me.aburke.urlshortener.link.dto.LinkResponse
-import me.aburke.urlshortener.link.dto.LinksResponse
+import me.aburke.urlshortener.link.dto.*
 import me.aburke.urlshortener.link.service.LinkDefinitionService
 import me.aburke.urlshortener.link.service.LinkDefinitionSpec
 import me.aburke.urlshortener.link.store.LinkStatus
@@ -70,5 +68,45 @@ class LinkDefinitionController(private val linkDefinitionService: LinkDefinition
                 linkTarget = it.linkTarget,
             )
         }.let { LinksResponse(it) }
+    }
+
+    @PutMapping("/{linkId}/label")
+    fun updateLabel(
+        @PathVariable linkId: String,
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestAttribute("session") session: SessionModel,
+        @RequestBody update: UpdateLinkLabelRequest,
+    ): UpdateLinkResponse {
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "updateLinkLabel")
+        contextWithAction.writeLog { logger.info("Request received to update link label") }
+
+        linkDefinitionService.updateLinkLabel(
+            userId = session.userId,
+            linkId = linkId,
+            label = update.label,
+            loggingContext = loggingContext,
+        )
+
+        return UpdateLinkResponse()
+    }
+
+    @PutMapping("/{linkId}/status")
+    fun updateStatus(
+        @PathVariable linkId: String,
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestAttribute("session") session: SessionModel,
+        @RequestBody update: UpdateLinkStatusRequest,
+    ): UpdateLinkResponse {
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "updateLinkStatus")
+        contextWithAction.writeLog { logger.info("Request received to update link status") }
+
+        linkDefinitionService.updateLinkStatus(
+            userId = session.userId,
+            linkId = linkId,
+            status = update.status,
+            loggingContext = loggingContext,
+        )
+
+        return UpdateLinkResponse()
     }
 }
