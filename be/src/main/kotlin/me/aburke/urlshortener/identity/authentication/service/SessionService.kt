@@ -31,11 +31,11 @@ class SessionService(
         if (user == null) {
             loggingContext.with("username" to canonicalUsername)
                 .writeLog { logger.debug("User not found for username; login failed") }
-            throw LoginFailureError()
+            throw LoginFailureError
         } else if (!passwordEncoder.matches(password, user.password)) {
             loggingContext.with("username" to canonicalUsername)
                 .writeLog { logger.debug("Password provided did not match DB; login failed") }
-            throw LoginFailureError()
+            throw LoginFailureError
         }
 
         return SessionModel(

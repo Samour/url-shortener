@@ -146,7 +146,7 @@ class LinkDefinitionStore(
             }
         } catch (e: ConditionalCheckFailedException) {
             context.writeLog { logger.info("Attempted to update item that does not exist") }
-            throw ResourceNotFoundError()
+            throw ResourceNotFoundError
         }
     }
 }
