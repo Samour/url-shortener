@@ -48,6 +48,7 @@ class AuthenticationController(private val sessionService: SessionService) {
             .apply {
                 secure = true
                 isHttpOnly = true
+                path = "/"
             }
 
     @PostMapping("/logout")

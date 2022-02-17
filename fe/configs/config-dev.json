@@ -2,5 +2,8 @@
   "apiEndpoint": "https://api.urls.samour.net/url-shortener/",
   "registerConfig": {
     "minPasswordLength": 8
+  },
+  "shortUrlConfig": {
+    "shortUrlBase": "https://short.samour.net"
   }
 }

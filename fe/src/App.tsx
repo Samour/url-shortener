@@ -3,7 +3,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import './App.css';
 import LoginView from './views/LoginView';
-import LandingView from './views/LandingView';
+import LinkDetailsListView from './views/LinkDetailsListView';
 import RegisterView from './views/RegisterView';
 import AppLoadingView from './views/AppLoadingView';
 import {AppState} from './store/model';
@@ -30,7 +30,7 @@ function App() {
     return (
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<LandingView/>}/>
+          <Route path='/' element={<LinkDetailsListView/>}/>
           <Route path='/login' element={<LoginView/>}/>
           <Route path='/register' element={<RegisterView/>}/>
         </Routes>
