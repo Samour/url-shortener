@@ -1,11 +1,12 @@
 import {Dispatch} from 'redux';
 import {useDispatch} from 'react-redux';
-import {HttpService, useHttpService} from './httpService';
 import {LinksResponse} from 'src/dto/LinksResponse';
 import {setLinksMutation} from 'src/store/mutations/linkDetails/SetLinksMutation';
+import {LinkFilterStatus} from 'src/store/model/LinkDetails';
+import {GetParams, HttpService, useHttpService} from './httpService';
 
 export interface LinkManagementService {
-  fetchLinks(): Promise<void>;
+  fetchLinks(filter: LinkFilterStatus): Promise<void>;
 }
 
 class LinkManagementServiceImpl implements LinkManagementService {
@@ -13,8 +14,12 @@ class LinkManagementServiceImpl implements LinkManagementService {
   constructor(private readonly httpService: HttpService, private readonly dispatch: Dispatch) {
   }
 
-  async fetchLinks(): Promise<void> {
-    const {links} = await this.httpService.get<LinksResponse>('/v1/links');
+  async fetchLinks(filter: LinkFilterStatus): Promise<void> {
+    const params: GetParams = {};
+    if (filter !== LinkFilterStatus.ALL) {
+      params['status'] = filter;
+    }
+    const {links} = await this.httpService.get<LinksResponse>('/v1/links', params);
     this.dispatch(setLinksMutation(links));
   }
 }

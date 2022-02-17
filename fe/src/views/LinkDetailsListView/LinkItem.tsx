@@ -37,13 +37,13 @@ const LinkItem = ({linkId}: Props): JSX.Element => {
     <Card>
       <CardContent>
         <Grid container>
-          <Grid xs={4}>
+          <Grid item xs={4}>
             {linkDetail.label}
           </Grid>
-          <Grid xs={4}>
+          <Grid item xs={4}>
             {linkDetail.linkTarget}
           </Grid>
-          <Grid xs={3} display='flex' justifyContent='flex-end'>
+          <Grid item xs={3} display='flex' justifyContent='flex-end'>
             <Tooltip title={linkTooltop}>
               <IconButton onClick={onLinkClick}>
                 <InsertLink/>

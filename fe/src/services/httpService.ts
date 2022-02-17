@@ -7,8 +7,10 @@ import {AppConfigs} from 'src/store/model/AppConfigs';
 import {appConfigsMutation} from 'src/store/mutations/AppConfigsMutation';
 import {userAnonymousMutation} from 'src/store/mutations/authenticatedUser/UserAnonymousMutation';
 
+export type GetParams = { [key: string]: string };
+
 export interface HttpService {
-  get<T>(endpoint: string): Promise<T>;
+  get<T>(endpoint: string, params?: GetParams): Promise<T>;
 
   post<B, T>(endpoint: string, body: B): Promise<T>;
 }
@@ -22,7 +24,7 @@ class HttpServiceImpl implements HttpService {
   constructor(private readonly store: Store<AppState>) {
   }
 
-  private async buildUrl(endpoint: string): Promise<string> {
+  private async buildUrl(endpoint: string, params?: GetParams): Promise<string> {
     if (this.baseUrl === null) {
       this.baseUrl = fetch('/config.json')
         .then((r) => r.json())
@@ -34,11 +36,18 @@ class HttpServiceImpl implements HttpService {
     const baseUrl = await this.baseUrl;
     const url = new URL(`${baseUrl}/${endpoint}`);
     url.pathname = url.pathname.replaceAll(/\/\/+/g, "/");
+    if (params) {
+      for (let key in params) {
+        if (!!params[key]) {
+          url.searchParams.set(key, params[key]);
+        }
+      }
+    }
     return url.toString();
   }
 
-  async get<T>(endpoint: string): Promise<T> {
-    const url = await this.buildUrl(endpoint);
+  async get<T>(endpoint: string, params?: GetParams): Promise<T> {
+    const url = await this.buildUrl(endpoint, params);
     return this.executeCall(() => fetch(
       url,
       {credentials: 'include'},
