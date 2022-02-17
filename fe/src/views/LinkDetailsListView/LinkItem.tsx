@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Card, CardContent, Grid, Icon, IconButton, Tooltip} from '@mui/material';
+import {Card, CardContent, Grid, IconButton, Tooltip} from '@mui/material';
 import {InsertLink} from '@mui/icons-material';
 import {LinkDetail} from 'src/store/model/LinkDetails';
 import {AppState} from 'src/store/model';
