@@ -70,6 +70,28 @@ class LinkDefinitionController(private val linkDefinitionService: LinkDefinition
         }.let { LinksResponse(it) }
     }
 
+    @GetMapping("/{linkId}")
+    fun getLink(
+        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
+        @RequestAttribute("session") session: SessionModel,
+        @PathVariable linkId: String,
+    ): LinkResponse {
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "getLinkById")
+        contextWithAction.with("linkId" to linkId)
+            .writeLog { logger.info("Request received to retrieve link") }
+
+        return linkDefinitionService.getLink(session.userId, linkId, loggingContext)
+            .let {
+                LinkResponse(
+                    id = it.id,
+                    label = it.label,
+                    pathName = it.pathName,
+                    status = it.status,
+                    linkTarget = it.linkTarget,
+                )
+            }
+    }
+
     @PutMapping("/{linkId}/label")
     fun updateLabel(
         @PathVariable linkId: String,

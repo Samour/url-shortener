@@ -1,5 +1,6 @@
 package me.aburke.urlshortener.link.service
 
+import me.aburke.urlshortener.errors.ResourceNotFoundError
 import me.aburke.urlshortener.link.store.LinkDefinitionModel
 import me.aburke.urlshortener.link.store.LinkDefinitionStore
 import me.aburke.urlshortener.link.store.LinkStatus
@@ -41,6 +42,10 @@ class LinkDefinitionService(private val linkDefinitionStore: LinkDefinitionStore
     ): List<LinkDefinitionModel> {
         loggingContext.writeLog { logger.info("Searching LinkDefinitions for user") }
         return linkDefinitionStore.getLinksSortedByLabelName(userId, onlyWithStatus, loggingContext)
+    }
+
+    fun getLink(userId: String, linkId: String, loggingContext: LoggingContext): LinkDefinitionModel {
+        return linkDefinitionStore.findLink(userId, linkId, loggingContext) ?: throw ResourceNotFoundError
     }
 
     fun updateLinkLabel(userId: String, linkId: String, label: String, loggingContext: LoggingContext) {

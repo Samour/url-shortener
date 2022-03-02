@@ -12,7 +12,16 @@ export enum LinkFilterStatus {
   INACTIVE = 'INACTIVE',
 }
 
+export enum LinkInViewDataStatus {
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  PENDING = 'PENDING',
+  AVAILABLE = 'AVAILABLE',
+  UNAVAILABLE = 'UNAVAILABLE',
+}
+
 export interface LinkDetailsState {
   filterStatus: LinkFilterStatus;
   links: LinkDetail[];
+  linkInViewId: string | null;
+  linkInViewDataStatus: LinkInViewDataStatus;
 }

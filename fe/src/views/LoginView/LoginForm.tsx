@@ -1,6 +1,5 @@
 import React from 'react';
 import {Button, Grid, TextField} from '@mui/material';
-import './index.css';
 import {useLoginForm} from './login';
 
 const LoginForm = (): JSX.Element => {

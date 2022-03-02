@@ -77,16 +77,30 @@ class LinkDefinitionStore(
                     ).filterValues { it != null }
                 )
         }.items()
-            .map {
-                LinkDefinitionModel(
-                    userId = it["userId"]!!.s(),
-                    id = it["id"]!!.s(),
-                    label = it["label"]!!.s(),
-                    pathName = it["pathName"]!!.s(),
-                    status = LinkStatus.valueOf(it["status"]!!.s()),
-                    linkTarget = it["linkTarget"]!!.s(),
+            .map(::deserialise)
+    }
+
+    fun findLink(userId: String, linkId: String, loggingContext: LoggingContext): LinkDefinitionModel? {
+        loggingContext.with(
+            mapOf(
+                "dbAction" to "getItem",
+                "dbTable" to tableName,
+                "itemHashKey" to userId,
+                "itemRangeKey" to linkId,
+            )
+        ).writeLog { logger.debug("Fetching LinkDefinition from DB") }
+
+        return dynamoDbClient.getItem { b ->
+            b.tableName(tableName)
+                .key(
+                    mapOf(
+                        "userId" to AttributeValue.builder().s(userId).build(),
+                        "id" to AttributeValue.builder().s(linkId).build(),
+                    )
                 )
-            }
+        }.takeIf { it.hasItem() }
+            ?.item()
+            ?.let(::deserialise)
     }
 
     fun updateLabel(userId: String, id: String, label: String, loggingContext: LoggingContext) {
@@ -149,4 +163,14 @@ class LinkDefinitionStore(
             throw ResourceNotFoundError
         }
     }
+
+    private fun deserialise(item: Map<String, AttributeValue>): LinkDefinitionModel =
+        LinkDefinitionModel(
+            userId = item["userId"]!!.s(),
+            id = item["id"]!!.s(),
+            label = item["label"]!!.s(),
+            pathName = item["pathName"]!!.s(),
+            status = LinkStatus.valueOf(item["status"]!!.s()),
+            linkTarget = item["linkTarget"]!!.s(),
+        )
 }

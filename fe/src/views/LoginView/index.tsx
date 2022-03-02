@@ -2,6 +2,7 @@ import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Box, Button, Container, Grid} from '@mui/material';
 import authenticated, {AuthRequired} from 'src/components/authenticates';
+import FrameSpacer from 'src/components/FrameSpacer';
 import LoginForm from './LoginForm';
 
 const LoginView = (): JSX.Element => {
@@ -11,9 +12,7 @@ const LoginView = (): JSX.Element => {
 
   return (
     <Container id='LoginView' fixed maxWidth='xs'>
-      <Box sx={{display: {xs: 'none', sm: 'block'}}}>
-        <div className='spacer'/>
-      </Box>
+      <FrameSpacer/>
       <Grid container spacing={5}>
         <Grid item xs={12}>
           <LoginForm/>

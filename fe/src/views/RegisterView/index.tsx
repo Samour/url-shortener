@@ -2,8 +2,8 @@ import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Box, Button, Container, Grid, TextField} from '@mui/material';
 import authenticated, {AuthRequired} from 'src/components/authenticates';
+import FrameSpacer from 'src/components/FrameSpacer';
 import {useRegisterForm} from './registerForm';
-import './index.css';
 
 const RegisterView = (): JSX.Element => {
   const navigate = useNavigate();
@@ -33,9 +33,7 @@ const RegisterView = (): JSX.Element => {
 
   return (
     <Container id='RegisterView' fixed maxWidth='xs'>
-      <Box sx={{display: {xs: 'none', sm: 'block'}}}>
-        <div className='spacer'/>
-      </Box>
+      <FrameSpacer/>
       <form onSubmit={onSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
