@@ -7,7 +7,6 @@ export interface ShortUrlConfig {
 }
 
 export interface Features {
-  addLink?: boolean;
 }
 
 export interface AppConfigs {

@@ -14,18 +14,15 @@ import './App.css';
 
 interface State {
   enableRouting: boolean;
-  enableCreateLinkRoute: boolean;
 }
 
 const selector = (state: AppState): State => ({
   enableRouting: state.authenticatedUser.authStatus !== AuthStatus.INDETERMINATE,
-  enableCreateLinkRoute: state.appConfigs?.features?.addLink ?? false,
 });
 
 function App() {
   const {
     enableRouting,
-    enableCreateLinkRoute,
   } = useSelector(selector);
   const initialiseUserState = useInitialiseUserState();
 
@@ -41,7 +38,7 @@ function App() {
           <Route path='/links/:linkId/edit' element={<LinkEditView/>}/>
           <Route path='/login' element={<LoginView/>}/>
           <Route path='/register' element={<RegisterView/>}/>
-          {enableCreateLinkRoute && <Route path='/links/create' element={<CreateLinkView/>}/>}
+          <Route path='/links/create' element={<CreateLinkView/>}/>
         </Routes>
       </BrowserRouter>
     );
