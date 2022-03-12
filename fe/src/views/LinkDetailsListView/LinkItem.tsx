@@ -6,8 +6,6 @@ import {Edit, InsertLink} from '@mui/icons-material';
 import {LinkDetail} from 'src/store/model/LinkDetails';
 import {AppState} from 'src/store/model';
 
-const ENABLE_DETAIL_NAV = false;
-
 interface Props {
   linkId: string;
 }
@@ -54,9 +52,9 @@ const LinkItem = ({linkId}: Props): JSX.Element => {
                 <InsertLink/>
               </IconButton>
             </Tooltip>
-            {ENABLE_DETAIL_NAV && <IconButton onClick={onEditClick}>
+            <IconButton onClick={onEditClick}>
               <Edit/>
-            </IconButton>}
+            </IconButton>
           </Grid>
         </Grid>
       </CardContent>

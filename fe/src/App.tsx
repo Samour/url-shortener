@@ -11,8 +11,6 @@ import {AuthStatus} from './store/model/AuthenticatedUser';
 import {useInitialiseUserState} from './services/userAuthService';
 import './App.css';
 
-const ENABLE_DETAIL_NAV = false;
-
 interface State {
   enableRouting: boolean;
 }
@@ -34,7 +32,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<LinkDetailsListView/>}/>
-          {ENABLE_DETAIL_NAV && <Route path='/links/:linkId/edit' element={<LinkEditView/>}/>}
+          <Route path='/links/:linkId/edit' element={<LinkEditView/>}/>
           <Route path='/login' element={<LoginView/>}/>
           <Route path='/register' element={<RegisterView/>}/>
         </Routes>

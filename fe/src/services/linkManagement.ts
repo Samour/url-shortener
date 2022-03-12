@@ -1,13 +1,22 @@
-import {useDispatch} from 'react-redux';
-import {LinkResponse, LinksResponse} from 'src/dto/LinksResponse';
-import {setLinksMutation} from 'src/store/mutations/linkDetails/SetLinksMutation';
+import {useDispatch, useStore} from 'react-redux';
+import {LinkResponse, LinksResponse, LinkStatus} from 'src/dto/LinksResponse';
 import {LinkFilterStatus, LinkInViewDataStatus} from 'src/store/model/LinkDetails';
+import {AppState} from 'src/store/model';
+import {setLinksMutation} from 'src/store/mutations/linkDetails/SetLinksMutation';
 import {linkInViewDataStatusMutation} from 'src/store/mutations/linkDetails/LinkInViewDataStatusMutation';
 import {storeLinkDetailMutation} from 'src/store/mutations/linkDetails/StoreLinkDetailMutation';
+import {IllegalStateException} from 'src/errors/IllegalStateException';
+import {UpdateLinkRequest} from 'src/dto/UpdateLinkRequest';
 import {GetParams, useHttpService} from './httpService';
+
+export interface UpdateLinkSpec {
+  label: string;
+  status: LinkStatus;
+}
 
 export type FetchLinksFn = (filter: LinkFilterStatus) => Promise<void>;
 export type FetchLinkByIdFn = (linkId: string) => Promise<void>;
+export type UpdateLinkFn = (update: UpdateLinkSpec) => Promise<void>;
 
 export const useFetchLinks = (): FetchLinksFn => {
   const httpService = useHttpService();
@@ -34,5 +43,25 @@ export const useFetchLinkById = (): FetchLinkByIdFn => {
     } catch (e) {
       dispatch(linkInViewDataStatusMutation(LinkInViewDataStatus.UNAVAILABLE));
     }
+  };
+};
+
+export const useUpdateLink = (): UpdateLinkFn => {
+  const store = useStore<AppState>();
+  const httpService = useHttpService();
+
+  return async (update: UpdateLinkSpec): Promise<void> => {
+    const linkId = store.getState().linkDetails.linkInViewId;
+    if (!linkId || store.getState().linkDetails.linkInViewDataStatus !== LinkInViewDataStatus.AVAILABLE) {
+      throw new IllegalStateException();
+    }
+
+    const link = store.getState().linkDetails.links.find(({id}) => id === linkId)!;
+    const request: UpdateLinkRequest = {
+      label: update.label === link.label ? undefined : update.label,
+      status: update.status === link.status ? undefined : update.status,
+    };
+
+    await httpService.patch(`/v1/links/${linkId}`, request);
   };
 };

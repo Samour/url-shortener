@@ -13,6 +13,8 @@ export interface HttpService {
   get<T>(endpoint: string, params?: GetParams): Promise<T>;
 
   post<B, T>(endpoint: string, body: B): Promise<T>;
+
+  patch<B, T>(endpoint: string, body: B): Promise<T>;
 }
 
 const isOkStatus = (statusCode: number): boolean => Math.floor(statusCode / 100) === 2;
@@ -55,10 +57,18 @@ class HttpServiceImpl implements HttpService {
   }
 
   async post<B, T>(endpoint: string, body: B): Promise<T> {
+    return this.makeCallWithBody('POST', endpoint, body);
+  }
+
+  async patch<B, T>(endpoint: string, body: B): Promise<T> {
+    return this.makeCallWithBody('PATCH', endpoint, body);
+  }
+
+  private async makeCallWithBody<B, T>(method: string, endpoint: string, body: B): Promise<T> {
     const url = await this.buildUrl(endpoint);
     return this.executeCall(() =>
       fetch(url, {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },

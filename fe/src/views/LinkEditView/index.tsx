@@ -42,11 +42,13 @@ const LinkEditView = (): JSX.Element => {
   } = useSelector(selector(linkId!));
   const {
     label,
+    labelError,
     setLabel,
     status,
     setStatus,
+    allowSubmit,
     submitInProgress,
-    labelError,
+    submit,
   } = useLinkEditForm();
 
   useEffect(() => {
@@ -75,6 +77,7 @@ const LinkEditView = (): JSX.Element => {
   const onLabelChange = (e: any) => setLabel(e.target.value);
   const onStatusChange = (e: any) => setStatus(e.target.value);
   const onCancelClick = () => navigate('/');
+  const onUpdateClick = () => submit();
 
   return (
     <AppFrame>
@@ -106,7 +109,7 @@ const LinkEditView = (): JSX.Element => {
             Status:
           </Grid>
           <Grid item xs={8}>
-            <Select value={status} onChange={onStatusChange}>
+            <Select value={status} disabled={submitInProgress} onChange={onStatusChange}>
               <MenuItem value={LinkStatus.ACTIVE}>Active</MenuItem>
               <MenuItem value={LinkStatus.INACTIVE}>Inactive</MenuItem>
             </Select>
@@ -120,10 +123,10 @@ const LinkEditView = (): JSX.Element => {
               disabled={true}/>
           </Grid>
           <Grid item xs={6}>
-            <Button color='secondary' onClick={onCancelClick}>Cancel</Button>
+            <Button color='secondary' disabled={submitInProgress} onClick={onCancelClick}>Cancel</Button>
           </Grid>
           <Grid item xs={6} display='flex' justifyContent='flex-end'>
-            <Button>Update</Button>
+            <Button disabled={!allowSubmit || submitInProgress} onClick={onUpdateClick}>Update</Button>
           </Grid>
         </Grid>
       </Container>
