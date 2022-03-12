@@ -92,42 +92,38 @@ class LinkDefinitionController(private val linkDefinitionService: LinkDefinition
             }
     }
 
-    @PutMapping("/{linkId}/label")
-    fun updateLabel(
+    @PatchMapping("/{linkId}")
+    fun updateLink(
         @PathVariable linkId: String,
         @RequestAttribute("loggingContext") loggingContext: LoggingContext,
         @RequestAttribute("session") session: SessionModel,
-        @RequestBody update: UpdateLinkLabelRequest,
+        @RequestBody update: UpdateLinkRequest,
     ): UpdateLinkResponse {
-        val contextWithAction = loggingContext.withAttribute("apiAction" to "updateLinkLabel")
-        contextWithAction.writeLog { logger.info("Request received to update link label") }
+        val contextWithAction = loggingContext.withAttribute("apiAction" to "updateLink")
+            .with(
+                mapOf(
+                    "labelValue" to update.label,
+                    "statusValue" to update.status?.name,
+                )
+            )
+        contextWithAction.writeLog { logger.info("Request received to update link") }
 
-        linkDefinitionService.updateLinkLabel(
-            userId = session.userId,
-            linkId = linkId,
-            label = update.label,
-            loggingContext = loggingContext,
-        )
-
-        return UpdateLinkResponse()
-    }
-
-    @PutMapping("/{linkId}/status")
-    fun updateStatus(
-        @PathVariable linkId: String,
-        @RequestAttribute("loggingContext") loggingContext: LoggingContext,
-        @RequestAttribute("session") session: SessionModel,
-        @RequestBody update: UpdateLinkStatusRequest,
-    ): UpdateLinkResponse {
-        val contextWithAction = loggingContext.withAttribute("apiAction" to "updateLinkStatus")
-        contextWithAction.writeLog { logger.info("Request received to update link status") }
-
-        linkDefinitionService.updateLinkStatus(
-            userId = session.userId,
-            linkId = linkId,
-            status = update.status,
-            loggingContext = loggingContext,
-        )
+        update.label?.let {
+            linkDefinitionService.updateLinkLabel(
+                userId = session.userId,
+                linkId = linkId,
+                label = it,
+                loggingContext = contextWithAction,
+            )
+        }
+        update.status?.let {
+            linkDefinitionService.updateLinkStatus(
+                userId = session.userId,
+                linkId = linkId,
+                status = it,
+                loggingContext = contextWithAction
+            )
+        }
 
         return UpdateLinkResponse()
     }
