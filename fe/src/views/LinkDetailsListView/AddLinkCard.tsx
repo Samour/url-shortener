@@ -1,5 +1,6 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import {Card, CardContent} from '@mui/material';
 import {AppState} from 'src/store/model';
 import {Add} from '@mui/icons-material';
@@ -15,12 +16,13 @@ const selector = (state: AppState): State => ({
 
 const AddLinkCard = (): JSX.Element | null => {
   const {hideElement} = useSelector(selector);
+  const navigate = useNavigate();
 
   if (hideElement) {
     return null;
   }
 
-  const onClick = () => console.log('Clicked!');
+  const onClick = () => navigate('/links/create');
 
   return (
     <Card>
