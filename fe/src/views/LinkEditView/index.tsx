@@ -67,7 +67,7 @@ const LinkEditView = (): JSX.Element => {
   // on unmount
   useEffect(() => () => {
     dispatch(bringLinkIntoViewMutation(null))
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (linkInViewDataStatus === LinkInViewDataStatus.UNAVAILABLE) {
     return <LinkUnavailable/>;
