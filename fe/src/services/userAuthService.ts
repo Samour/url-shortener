@@ -1,43 +1,41 @@
-import {Store} from 'redux';
-import {useStore} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {AuthInfoResponse} from 'src/dto/AuthInfoResponse';
-import {AppState} from 'src/store/model';
 import {userAuthenticatedMutation} from 'src/store/mutations/authenticatedUser/UserAuthenticatedMutation';
 import {userAnonymousMutation} from 'src/store/mutations/authenticatedUser/UserAnonymousMutation';
 import {LoginRequest, LoginResponse} from 'src/dto/LoginDtos';
 import {ApiError, ApiErrorCode} from 'src/errors/ApiError';
 import {UserLoginError} from 'src/errors/UserLoginError';
-import {HttpService, useHttpService} from './httpService';
+import {useHttpService} from './httpService';
 
-export interface UserAuthService {
-  initialiseUserState(): Promise<void>;
+export type InitialiseUserStateFn = () => Promise<void>;
+export type LogInFn = (username: string, password: string) => Promise<void>;
+export type LogOutFn = () => Promise<void>;
 
-  logIn(username: string, password: string): Promise<void>;
+export const useInitialiseUserState = (): InitialiseUserStateFn => {
+  const httpService = useHttpService();
+  const dispatch = useDispatch();
 
-  logOut(): Promise<void>;
-}
-
-class UserAuthServiceImpl implements UserAuthService {
-
-  constructor(private readonly httpService: HttpService, private readonly store: Store<AppState>) {
-  }
-
-  async initialiseUserState(): Promise<void> {
+  return async (): Promise<void> => {
     try {
-      const result = await this.httpService.get<AuthInfoResponse>('/v1/identity/info');
-      this.store.dispatch(userAuthenticatedMutation(result));
+      const result = await httpService.get<AuthInfoResponse>('/v1/identity/info');
+      dispatch(userAuthenticatedMutation(result));
     } catch (e) {
-      this.store.dispatch(userAnonymousMutation());
+      dispatch(userAnonymousMutation());
     }
-  }
+  };
+};
 
-  async logIn(username: string, password: string): Promise<void> {
+export const useLogIn = (): LogInFn => {
+  const httpService = useHttpService();
+  const dispatch = useDispatch();
+
+  return async (username: string, password: string): Promise<void> => {
     try {
-      const result = await this.httpService.post<LoginRequest, LoginResponse>(
+      const result = await httpService.post<LoginRequest, LoginResponse>(
         '/v1/identity/login',
         {username, password},
       );
-      this.store.dispatch(userAuthenticatedMutation(result));
+      dispatch(userAuthenticatedMutation(result));
     } catch (e) {
       if (e instanceof ApiError && e.errorCode === ApiErrorCode.LOGIN_FAILURE) {
         throw new UserLoginError();
@@ -45,22 +43,15 @@ class UserAuthServiceImpl implements UserAuthService {
         throw e;
       }
     }
-  }
+  };
+};
 
-  async logOut(): Promise<void> {
-    await this.httpService.post('/v1/identity/logout', {});
-    this.store.dispatch(userAnonymousMutation());
-  }
-}
-
-let service: UserAuthService | null = null;
-
-export const useUserAuthService = (): UserAuthService => {
+export const useLogOut = (): LogOutFn => {
   const httpService = useHttpService();
-  const store = useStore();
-  if (service === null) {
-    service = new UserAuthServiceImpl(httpService, store);
-  }
+  const dispatch = useDispatch();
 
-  return service;
+  return async (): Promise<void> => {
+    await httpService.post('/v1/identity/logout', {});
+    dispatch(userAnonymousMutation());
+  };
 };

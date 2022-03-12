@@ -1,15 +1,15 @@
 import React from 'react';
 import {AppBar, Box, Button, Toolbar} from '@mui/material';
-import {useUserAuthService} from 'src/services/userAuthService';
+import {useLogOut} from 'src/services/userAuthService';
 
 interface Props {
   children?: React.ReactNode;
 }
 
 const AppFrame = ({children}: Props): JSX.Element => {
-  const userAuthService = useUserAuthService();
+  const logOut = useLogOut();
 
-  const onLogout = () => userAuthService.logOut().catch(console.error)
+  const onLogout = () => logOut().catch(console.error)
 
   return (
     <div>

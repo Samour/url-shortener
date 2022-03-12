@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Container, Grid, MenuItem, Select, Stack} from '@mui/material';
 import authenticated from 'src/components/authenticates';
 import AppFrame from 'src/components/AppFrame';
-import {useLinkManagementService} from 'src/services/linkManagementService';
+import {useFetchLinks} from 'src/services/linkManagement';
 import {AppState} from 'src/store/model';
 import {LinkFilterStatus} from 'src/store/model/LinkDetails';
 import {setLinkFilterStatusMutation} from 'src/store/mutations/linkDetails/SetLinkFilterStatusMutation';
@@ -22,14 +22,14 @@ const selector = (state: AppState): State => ({
 
 const LinkDefinitionListView = (): JSX.Element => {
   const dispatch = useDispatch();
-  const linkManagementService = useLinkManagementService();
+  const fetchLinks = useFetchLinks();
   const {
     filterStatus,
     linkIds,
   } = useSelector(selector);
 
   useEffect(() => {
-    linkManagementService.fetchLinks(filterStatus);
+    fetchLinks(filterStatus);
   }, [filterStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onFilterChange = (e: any) => dispatch(setLinkFilterStatusMutation(e.target.value));

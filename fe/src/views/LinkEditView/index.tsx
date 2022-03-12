@@ -6,7 +6,7 @@ import AppFrame from 'src/components/AppFrame';
 import authenticated from 'src/components/authenticates';
 import {LinkDetail, LinkInViewDataStatus} from 'src/store/model/LinkDetails';
 import {AppState} from 'src/store/model';
-import {useLinkManagementService} from 'src/services/linkManagementService';
+import {useFetchLinkById} from 'src/services/linkManagement';
 import AppLoadingView from 'src/views/AppLoadingView';
 import {bringLinkIntoViewMutation} from 'src/store/mutations/linkDetails/BringLinkIntoViewMutation';
 import {linkInViewDataStatusMutation} from 'src/store/mutations/linkDetails/LinkInViewDataStatusMutation';
@@ -27,7 +27,7 @@ const selector = (linkId: string) => (state: AppState): State => ({
 
 const LinkEditView = (): JSX.Element => {
   const dispatch = useDispatch();
-  const linkManagementService = useLinkManagementService();
+  const fetchLinkById = useFetchLinkById();
   const {linkId} = useParams() as { linkId: string };
   const {
     linkInViewId,
@@ -40,7 +40,7 @@ const LinkEditView = (): JSX.Element => {
       dispatch(bringLinkIntoViewMutation(linkId));
       if (!link) {
         dispatch(linkInViewDataStatusMutation(LinkInViewDataStatus.PENDING));
-        linkManagementService.fetchLinkById(linkId);
+        fetchLinkById(linkId);
       }
     }
   }, [linkInViewId, linkId, link]); // eslint-disable-line react-hooks/exhaustive-deps

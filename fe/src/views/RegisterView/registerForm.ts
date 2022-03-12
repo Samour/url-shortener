@@ -3,15 +3,15 @@ import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {AppState} from 'src/store/model';
 import {RegisterConfig} from 'src/store/model/AppConfigs';
-import {UserCreatedResult, useRegisterUserService} from 'src/services/registerUserService';
+import {UserCreatedResult, useRegisterUser} from 'src/services/registerUserService';
 import {UserRegistrationError} from 'src/errors/UserRegistrationError';
-import {useUserAuthService} from 'src/services/userAuthService';
+import {useLogIn} from 'src/services/userAuthService';
 
 const selector = (state: AppState): RegisterConfig => state.appConfigs!.registerConfig;
 
 export const useRegisterForm = () => {
-  const registerUserService = useRegisterUserService();
-  const userAuthService = useUserAuthService();
+  const registerUser = useRegisterUser();
+  const logIn = useLogIn();
   const {minPasswordLength} = useSelector(selector);
   const navigate = useNavigate();
 
@@ -71,7 +71,7 @@ export const useRegisterForm = () => {
     setSubmitInProgress(true);
     let userCreated: UserCreatedResult | null = null;
     try {
-      userCreated = await registerUserService.registerUser({username, password});
+      userCreated = await registerUser({username, password});
     } catch (e) {
       setSubmitInProgress(false);
       if (e instanceof UserRegistrationError) {
@@ -83,7 +83,7 @@ export const useRegisterForm = () => {
     }
 
     try {
-      await userAuthService.logIn(userCreated.username, password);
+      await logIn(userCreated.username, password);
     } catch (e) {
       console.error('Error occurred while trying to log in. Redirecting user to login page to recover.', e);
       navigate('/login');

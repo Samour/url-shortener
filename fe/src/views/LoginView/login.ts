@@ -1,9 +1,9 @@
 import {useState} from 'react';
-import {useUserAuthService} from 'src/services/userAuthService';
+import {useLogIn} from 'src/services/userAuthService';
 import {UserLoginError} from 'src/errors/UserLoginError';
 
 export const useLoginForm = () => {
-  const userAuthService = useUserAuthService();
+  const logIn = useLogIn();
 
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export const useLoginForm = () => {
 
     setSubmitInProgress(true);
     try {
-      await userAuthService.logIn(username, password);
+      await logIn(username, password);
     } catch (e) {
       setSubmitInProgress(false);
       if (e instanceof UserLoginError) {

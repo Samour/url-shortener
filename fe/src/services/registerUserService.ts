@@ -1,7 +1,7 @@
 import {RegisterUserRequest, RegisterUserResponse} from 'src/dto/RegisterUserDtos';
 import {ApiError, ApiErrorCode} from 'src/errors/ApiError';
 import {UserRegistrationError} from 'src/errors/UserRegistrationError';
-import {HttpService, useHttpService} from './httpService';
+import {useHttpService} from './httpService';
 
 export interface RegisterUserDetails {
   username: string;
@@ -13,18 +13,14 @@ export interface UserCreatedResult {
   username: string;
 }
 
-export interface RegisterUserService {
-  registerUser(userDetails: RegisterUserDetails): Promise<UserCreatedResult>;
-}
+export type RegisterUserFn = (userDetails: RegisterUserDetails) => Promise<UserCreatedResult>;
 
-class RegisterUserServiceImpl implements RegisterUserService {
+export const useRegisterUser = (): RegisterUserFn => {
+  const httpService = useHttpService();
 
-  constructor(private readonly httpService: HttpService) {
-  }
-
-  async registerUser(userDetails: RegisterUserDetails): Promise<UserCreatedResult> {
+  return async (userDetails: RegisterUserDetails): Promise<UserCreatedResult> => {
     try {
-      return await this.httpService.post<RegisterUserRequest, RegisterUserResponse>(
+      return await httpService.post<RegisterUserRequest, RegisterUserResponse>(
         '/v1/identity/register',
         userDetails,
       );
@@ -35,16 +31,5 @@ class RegisterUserServiceImpl implements RegisterUserService {
         throw e;
       }
     }
-  }
-}
-
-let service: RegisterUserService | null = null;
-
-export const useRegisterUserService = (): RegisterUserService => {
-  const httpService = useHttpService();
-  if (service === null) {
-    service = new RegisterUserServiceImpl(httpService);
-  }
-
-  return service;
+  };
 };

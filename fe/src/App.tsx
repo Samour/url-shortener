@@ -8,7 +8,7 @@ import AppLoadingView from './views/AppLoadingView';
 import LinkEditView from './views/LinkEditView';
 import {AppState} from './store/model';
 import {AuthStatus} from './store/model/AuthenticatedUser';
-import {useUserAuthService} from './services/userAuthService';
+import {useInitialiseUserState} from './services/userAuthService';
 import './App.css';
 
 const ENABLE_DETAIL_NAV = false;
@@ -23,10 +23,10 @@ const selector = (state: AppState): State => ({
 
 function App() {
   const {enableRouting} = useSelector(selector);
-  const userAuthService = useUserAuthService();
+  const initialiseUserState = useInitialiseUserState();
 
   useEffect(() => {
-    userAuthService.initialiseUserState().catch(console.log);
+    initialiseUserState().catch(console.log);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (enableRouting) {
