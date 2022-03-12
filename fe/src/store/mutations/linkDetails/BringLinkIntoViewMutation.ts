@@ -3,10 +3,10 @@ import {MutationType} from 'src/store/mutations/MutationType';
 
 export interface BringLinkIntoViewMutation extends IMutation {
   type: MutationType.BRING_LINK_INTO_VIEW;
-  linkInViewId: string;
+  linkInViewId: string | null;
 }
 
-export const bringLinkIntoViewMutation = (linkInViewId: string): BringLinkIntoViewMutation => ({
+export const bringLinkIntoViewMutation = (linkInViewId: string | null): BringLinkIntoViewMutation => ({
   type: MutationType.BRING_LINK_INTO_VIEW,
   linkInViewId,
 });

@@ -18,12 +18,14 @@ const CreateLinkView = (): JSX.Element => {
     status,
     setStatus,
     submitInProgress,
+    submit,
   } = useCreateLinkForm();
 
   const onLabelChange = (e: any) => setLabel(e.target.value);
   const onLinkTargetChange = (e: any) => setLinkTarget(e.target.value);
   const onStatusChange = (e: any) => setStatus(e.target.value);
   const onCancelClick = () => navigate('/');
+  const onCreateClick = () => submit();
 
   return (
     <AppFrame>
@@ -67,7 +69,7 @@ const CreateLinkView = (): JSX.Element => {
             <Button color='secondary' disabled={submitInProgress} onClick={onCancelClick}>Cancel</Button>
           </Grid>
           <Grid item xs={6} display='flex' justifyContent='flex-end'>
-            <Button disabled={submitInProgress}>Create</Button>
+            <Button disabled={submitInProgress} onClick={onCreateClick}>Create</Button>
           </Grid>
         </Grid>
       </Container>

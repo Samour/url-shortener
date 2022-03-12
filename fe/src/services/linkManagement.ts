@@ -8,15 +8,23 @@ import {storeLinkDetailMutation} from 'src/store/mutations/linkDetails/StoreLink
 import {IllegalStateException} from 'src/errors/IllegalStateException';
 import {UpdateLinkRequest} from 'src/dto/UpdateLinkRequest';
 import {GetParams, useHttpService} from './httpService';
+import {CreateLinkRequest} from '../dto/CreateLinkRequest';
 
 export interface UpdateLinkSpec {
   label: string;
   status: LinkStatus;
 }
 
+export interface CreateLinkSpec {
+  label: string;
+  status: LinkStatus;
+  linkTarget: string;
+}
+
 export type FetchLinksFn = (filter: LinkFilterStatus) => Promise<void>;
 export type FetchLinkByIdFn = (linkId: string) => Promise<void>;
 export type UpdateLinkFn = (update: UpdateLinkSpec) => Promise<void>;
+export type CreateLinkFn = (link: CreateLinkSpec) => Promise<string>;
 
 export const useFetchLinks = (): FetchLinksFn => {
   const httpService = useHttpService();
@@ -63,5 +71,14 @@ export const useUpdateLink = (): UpdateLinkFn => {
     };
 
     await httpService.patch(`/v1/links/${linkId}`, request);
+  };
+};
+
+export const useCreateLink = (): CreateLinkFn => {
+  const httpService = useHttpService();
+
+  return async (link: CreateLinkSpec): Promise<string> => {
+    const response = await httpService.post<CreateLinkRequest, LinkResponse>('/v1/links', link);
+    return response.id;
   };
 };
