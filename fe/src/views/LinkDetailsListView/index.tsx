@@ -9,6 +9,7 @@ import {LinkFilterStatus} from 'src/store/model/LinkDetails';
 import {setLinkFilterStatusMutation} from 'src/store/mutations/linkDetails/SetLinkFilterStatusMutation';
 import LinkItem from './LinkItem';
 import './index.css';
+import AddLinkCard from './AddLinkCard';
 
 interface State {
   filterStatus: LinkFilterStatus;
@@ -52,6 +53,7 @@ const LinkDefinitionListView = (): JSX.Element => {
             </Grid>
           </Grid>
           {linkIds.map((id) => <LinkItem key={id} linkId={id}/>)}
+          <AddLinkCard/>
         </Stack>
       </Container>
     </AppFrame>

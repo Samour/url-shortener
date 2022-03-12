@@ -5,5 +5,8 @@
   },
   "shortUrlConfig": {
     "shortUrlBase": "https://short.samour.net"
+  },
+  "features": {
+    "addLink": true
   }
 }

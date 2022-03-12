@@ -1,0 +1,9 @@
+#LinkDetailsListView .add-link-card-content {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+#LinkDetailsListView .add-link-card-content .card-text {
+    margin-left: 30px;
+}
