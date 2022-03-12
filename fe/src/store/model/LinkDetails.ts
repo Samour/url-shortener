@@ -1,8 +1,10 @@
+import {LinkStatus} from 'src/dto/LinksResponse';
+
 export interface LinkDetail {
   id: string;
   label: string;
   pathName: string;
-  status: string;
+  status: LinkStatus;
   linkTarget: string;
 }
 
