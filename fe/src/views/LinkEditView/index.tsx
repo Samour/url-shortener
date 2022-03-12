@@ -4,7 +4,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {Button, Container, Grid, MenuItem, Select, TextField} from '@mui/material';
 import {LinkStatus} from 'src/dto/LinksResponse';
 import AppFrame from 'src/components/AppFrame';
-import authenticated from 'src/components/authenticates';
+import authenticated from 'src/components/authenticated';
 import {LinkDetail, LinkInViewDataStatus} from 'src/store/model/LinkDetails';
 import {AppState} from 'src/store/model';
 import {useFetchLinkById} from 'src/services/linkManagement';

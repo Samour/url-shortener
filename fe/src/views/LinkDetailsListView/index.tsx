@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Container, Grid, MenuItem, Select, Stack} from '@mui/material';
-import authenticated from 'src/components/authenticates';
+import authenticated from 'src/components/authenticated';
 import AppFrame from 'src/components/AppFrame';
 import {useFetchLinks} from 'src/services/linkManagement';
 import {AppState} from 'src/store/model';

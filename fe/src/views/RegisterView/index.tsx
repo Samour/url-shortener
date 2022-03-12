@@ -1,7 +1,7 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Button, Container, Grid, TextField} from '@mui/material';
-import authenticated, {AuthRequired} from 'src/components/authenticates';
+import authenticated, {AuthRequired} from 'src/components/authenticated';
 import FrameSpacer from 'src/components/FrameSpacer';
 import {useRegisterForm} from './registerForm';
 
