@@ -68,4 +68,12 @@ fun main(args: Array<String>) {
                 ).projection { p -> p.projectionType(ProjectionType.ALL) }
         })
     }
+
+    createTable("link-route") { b ->
+        b.attributeDefinitions(
+            Consumer { a -> a.attributeName("pathName").attributeType(ScalarAttributeType.S) },
+        ).keySchema(
+            Consumer { k -> k.attributeName("pathName").keyType(KeyType.HASH) }
+        )
+    }
 }

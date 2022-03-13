@@ -326,6 +326,42 @@ Resources:
         - Key: Phase
           Value: !Ref ProjectPhase
 
+  LinkRouteTable:
+    Type: AWS::DynamoDB::GlobalTable
+    Properties:
+      TableName: !Sub "${ServiceName}-link-route"
+      AttributeDefinitions:
+        - AttributeName: pathName
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pathName
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Replicas:
+        - Region: ap-southeast-2
+          Tags:
+            - Key: Project
+              Value: !Ref ServiceName
+            - Key: Phase
+              Value: !Ref ProjectPhase
+        - Region: ap-southeast-1
+          Tags:
+            - Key: Project
+              Value: !Ref ServiceName
+            - Key: Phase
+              Value: !Ref ProjectPhase
+        - Region: us-east-1
+          Tags:
+            - Key: Project
+              Value: !Ref ServiceName
+            - Key: Phase
+              Value: !Ref ProjectPhase
+      Tags:
+        - Key: Project
+          Value: !Ref ServiceName
+        - Key: Phase
+          Value: !Ref ProjectPhase
+
   # ECS Deployment
   ContainerLogGroup:
     Type: AWS::Logs::LogGroup
@@ -417,6 +453,7 @@ Resources:
                   - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-session"
                   - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-link-definition"
                   - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-link-definition/index/*"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceName}-link-route"
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition

@@ -12,6 +12,9 @@ dynamodb:
     link-definition:
       table-name: ${SERVICE_NAME}-link-definition
       label-index: ${SERVICE_NAME}-link-definition-label
+    link-route:
+      table-name: ${SERVICE_NAME}-link-route
+      reservation-period: PT5M
 
 web:
   cors:
