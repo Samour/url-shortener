@@ -337,6 +337,8 @@ Resources:
         - AttributeName: pathName
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
       Replicas:
         - Region: ap-southeast-2
           Tags:
